@@ -1,17 +1,13 @@
-package com.hoccer.filecache;
+package com.hoccer.talk.filecache;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
-import com.hoccer.filecache.db.MemoryBackend;
-import com.hoccer.filecache.db.OrmliteBackend;
-import com.hoccer.filecache.model.CacheFile;
+import com.hoccer.talk.filecache.db.MemoryBackend;
 
 @WebListener
 public class ContextListener implements ServletContextListener {

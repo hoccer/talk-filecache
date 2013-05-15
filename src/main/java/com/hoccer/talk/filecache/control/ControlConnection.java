@@ -1,9 +1,8 @@
-package com.hoccer.filecache.control;
+package com.hoccer.talk.filecache.control;
 
 import better.jsonrpc.core.JsonRpcConnection;
-import com.hoccer.filecache.CacheBackend;
-import com.hoccer.filecache.control.ICacheControl;
-import com.hoccer.filecache.model.CacheFile;
+import com.hoccer.talk.filecache.CacheBackend;
+import com.hoccer.talk.filecache.model.CacheFile;
 
 import javax.servlet.ServletContext;
 import java.util.UUID;

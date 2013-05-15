@@ -1,4 +1,4 @@
-package com.hoccer.filecache.transfer;
+package com.hoccer.talk.filecache.transfer;
 
 import java.util.ArrayDeque;
 

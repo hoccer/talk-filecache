@@ -1,4 +1,4 @@
-package com.hoccer.filecache.model;
+package com.hoccer.talk.filecache.model;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,9 +13,9 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
-import com.hoccer.filecache.CacheBackend;
-import com.hoccer.filecache.transfer.CacheDownload;
-import com.hoccer.filecache.transfer.CacheUpload;
+import com.hoccer.talk.filecache.CacheBackend;
+import com.hoccer.talk.filecache.transfer.CacheDownload;
+import com.hoccer.talk.filecache.transfer.CacheUpload;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 

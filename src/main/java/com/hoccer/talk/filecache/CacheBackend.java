@@ -1,11 +1,9 @@
-package com.hoccer.filecache;
+package com.hoccer.talk.filecache;
 
-import com.hoccer.filecache.model.CacheFile;
+import com.hoccer.talk.filecache.model.CacheFile;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
 
 public abstract class CacheBackend {
 

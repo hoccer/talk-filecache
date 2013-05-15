@@ -1,7 +1,7 @@
-package com.hoccer.filecache.db;
+package com.hoccer.talk.filecache.db;
 
-import com.hoccer.filecache.CacheBackend;
-import com.hoccer.filecache.model.CacheFile;
+import com.hoccer.talk.filecache.CacheBackend;
+import com.hoccer.talk.filecache.model.CacheFile;
 
 import java.io.File;
 import java.util.HashMap;

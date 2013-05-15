@@ -1,9 +1,9 @@
-package com.hoccer.filecache;
+package com.hoccer.talk.filecache;
 
 import com.google.appengine.api.blobstore.ByteRange;
 import com.google.appengine.api.blobstore.RangeFormatException;
-import com.hoccer.filecache.model.CacheFile;
-import com.hoccer.filecache.transfer.CacheUpload;
+import com.hoccer.talk.filecache.model.CacheFile;
+import com.hoccer.talk.filecache.transfer.CacheUpload;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;

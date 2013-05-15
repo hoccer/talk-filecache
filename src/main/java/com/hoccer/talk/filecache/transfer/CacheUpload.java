@@ -1,4 +1,4 @@
-package com.hoccer.filecache.transfer;
+package com.hoccer.talk.filecache.transfer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.blobstore.ByteRange;
-import com.hoccer.filecache.model.CacheFile;
+import com.hoccer.talk.filecache.model.CacheFile;
 
 /**
  * Active upload to the cache
