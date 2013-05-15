@@ -19,35 +19,40 @@
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>hoccer</groupId>
+      <artifactId>hoccer-talk-common</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
     <!-- Servlet API -->
     <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>javax.servlet-api</artifactId>
-        <version>3.0.1</version>
+        <version>${servlet.version}</version>
     </dependency>
     <!-- CORS implementation -->
     <dependency>
       <groupId>com.thetransactioncompany</groupId>
       <artifactId>cors-filter</artifactId>
-      <version>1.3.2</version>
+      <version>${cors-filter.version}</version>
     </dependency>
     <!-- Database binding / ORM -->
     <dependency>
       <groupId>com.j256.ormlite</groupId>
       <artifactId>ormlite-jdbc</artifactId>
-      <version>4.43</version>
+      <version>${ormlite.version}</version>
     </dependency>
     <!-- PostgreSQL JDBC driver -->
     <dependency>
         <groupId>postgresql</groupId>
         <artifactId>postgresql</artifactId>
-        <version>9.1-901.jdbc4</version>
+        <version>${postgresql.version}</version>
     </dependency>
     <!-- JSON-RPC library -->
     <dependency>
       <groupId>better</groupId>
       <artifactId>better-jsonrpc-websocket</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>${better.jsonrpc.version}</version>
     </dependency>
   </dependencies>
   
