@@ -3,6 +3,7 @@ package com.hoccer.talk.filecache.control;
 import better.jsonrpc.core.JsonRpcConnection;
 import com.hoccer.talk.filecache.CacheBackend;
 import com.hoccer.talk.filecache.model.CacheFile;
+import com.hoccer.talk.filecache.rpc.ICacheControl;
 
 import javax.servlet.ServletContext;
 import java.util.UUID;
