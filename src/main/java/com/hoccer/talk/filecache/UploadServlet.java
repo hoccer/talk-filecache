@@ -40,13 +40,13 @@ public class UploadServlet extends HttpServlet {
 
         CacheUpload upload = new CacheUpload(file, req, resp, range);
 
+        finishPut(file, req, resp);
+
         try {
             upload.perform();
         } catch (InterruptedException e) {
             return;
         }
-
-        finishPut(file, req, resp);
 
         log.info("upload finished: " + req.getPathInfo());
     }

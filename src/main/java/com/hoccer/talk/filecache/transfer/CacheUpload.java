@@ -63,7 +63,7 @@ public class CacheUpload extends CacheTransfer {
 			RandomAccessFile outFile = cacheFile.openForRandomAccess("rw");
 
 			// determine amount of data to send
-            int totalRequested = ((int)byteRange.getEnd()) - ((int)byteRange.getStart());
+            int totalRequested = ((int)byteRange.getEnd()) - ((int)byteRange.getStart()) + 1;
 
             outFile.setLength(cacheFile.getContentLength());
 			outFile.seek(byteRange.getStart());
