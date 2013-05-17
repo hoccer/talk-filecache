@@ -10,7 +10,7 @@ import java.util.ArrayDeque;
 public class BufferCache {
 
 	/** Size of all managed buffers */
-	public static final int BUFFER_SIZE = 2 ^ 16;
+	public static final int BUFFER_SIZE = 1 << 16;
 	
 	/** Number of buffers to be cached */
 	public static final int BUFFER_COUNT = 100;
