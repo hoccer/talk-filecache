@@ -60,14 +60,15 @@ public class DownloadServlet extends HttpServlet {
         // create a transfer object
         CacheDownload download = new CacheDownload(file, range, req, resp);
 
+        // finish response headers
+        finishGet(file, req, resp, range);
+
         // perform the download itself
         try {
             download.perform();
         } catch (InterruptedException e) {
             return;
         }
-
-        finishGet(file, req, resp, range);
 
         log.info("download finished: " + req.getPathInfo());
     }
@@ -79,7 +80,7 @@ public class DownloadServlet extends HttpServlet {
         if(headRange == null) {
             if(file.getContentLength() != -1) {
                 resp.setContentLength(file.getContentLength());
-                return new ByteRange(0, file.getContentLength());
+                return new ByteRange(0, file.getContentLength() - 1);
             } else {
                 return new ByteRange(0);
             }

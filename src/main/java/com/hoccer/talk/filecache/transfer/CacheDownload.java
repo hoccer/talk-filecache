@@ -44,7 +44,7 @@ public class CacheDownload extends CacheTransfer {
 			RandomAccessFile inFile = cacheFile.openForRandomAccess("r");
 
             // determine amount of data to send
-            int totalRequested = ((int)byteRange.getEnd()) - ((int)byteRange.getStart());
+            int totalRequested = ((int)byteRange.getEnd()) - ((int)byteRange.getStart()) + 1;
 
             // seek forward to the requested range
 			inFile.seek(byteRange.getStart());
@@ -58,17 +58,20 @@ public class CacheDownload extends CacheTransfer {
                     throw new InterruptedException();
                 }
 
-                // determine current limit
-                int absoluteLimit = Math.min(cacheFile.getLimit(), absoluteEnd);
                 // determine how much to transfer
                 int bytesWanted = Math.min(totalRequested - totalTransferred, buffer.length);
 
-                // wait for availability
+                // determine current limit
                 int limit = cacheFile.getLimit();
-                while (limit < (absolutePosition + bytesWanted)){
+                int absoluteLimit = Math.min(limit, absoluteEnd);
+
+                // wait for availability
+                while ((absoluteLimit != cacheFile.getContentLength())
+                        && (limit < (absolutePosition + bytesWanted))) {
                     Thread.sleep(100);
                     cacheFile.waitForData(absoluteLimit + bytesWanted);
                     limit = cacheFile.getLimit();
+                    absoluteLimit = Math.min(limit, absoluteEnd);
                 }
 
                 // read data from file
@@ -83,7 +86,7 @@ public class CacheDownload extends CacheTransfer {
                 // account for what we did
                 totalTransferred += bytesRead;
                 absolutePosition += bytesRead;
-                transferProgress(totalTransferred);
+                transferProgress(bytesRead);
             }
 
             // close file stream
