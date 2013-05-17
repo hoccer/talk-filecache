@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 @WebServlet(urlPatterns = "/upload/*")
-public class UploadServlet extends HttpServlet {
+public class UploadServlet extends DownloadServlet {
 
     static Logger log = Logger.getLogger(UploadServlet.class.getSimpleName());
 
