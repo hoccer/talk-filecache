@@ -150,7 +150,7 @@ public class UploadServlet extends DownloadServlet {
 
     private void finishPut(CacheFile file, HttpServletRequest req, HttpServletResponse resp) {
         resp.setContentLength(0);
-        resp.setHeader("Range", "bytes 0-" + file.getLimit() + "/" + file.getContentLength());
+        resp.setHeader("Range", "bytes=0-" + file.getLimit() + "/" + file.getContentLength());
         if(file.getLimit() == file.getContentLength()) {
             resp.setStatus(HttpServletResponse.SC_OK);
         } else {
