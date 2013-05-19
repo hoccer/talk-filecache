@@ -203,6 +203,7 @@ public class CacheFile {
 	
 	private void considerDeactivate() {
         if(!isActive()) {
+            mBackend.checkpoint(this);
             mBackend.deactivate(this);
         }
 	}
