@@ -47,7 +47,7 @@ public class CacheMain {
         // create jetty instance
         Server s = new Server(new InetSocketAddress(config.getListenAddress(),
                                                     config.getListenPort()));
-        s.setThreadPool(new QueuedThreadPool(32));
+        s.setThreadPool(new QueuedThreadPool(config.getServerThreads()));
 
         // create servlet context
         ServletContextHandler context = new ServletContextHandler();

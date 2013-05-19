@@ -1,4 +1,7 @@
 
+# Server config
+talk.filecache.server.threads = 128
+
 # Address to listen on
 talk.filecache.listen.address = localhost
 talk.filecache.listen.port = 8080

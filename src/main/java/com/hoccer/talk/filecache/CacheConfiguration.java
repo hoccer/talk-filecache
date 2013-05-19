@@ -7,6 +7,8 @@ public class CacheConfiguration {
 
     private static final String PROPERTY_PREFIX = "talk.filecache";
 
+    private int    mServerThreads = 128;
+
     private String mListenAddress = "localhost";
     private int    mListenPort    = 8080;
 
@@ -18,6 +20,14 @@ public class CacheConfiguration {
     private String mOrmliteUrl;
     private String mOrmliteUser;
     private String mOrmlitePassword;
+
+    public int getServerThreads() {
+        return mServerThreads;
+    }
+
+    public void setServerThreads(int mServerThreads) {
+        this.mServerThreads = mServerThreads;
+    }
 
     public String getListenAddress() {
         return mListenAddress;
@@ -80,6 +90,8 @@ public class CacheConfiguration {
     }
 
     public void configureFromProperties(Properties properties) {
+        // Server
+        mServerThreads = Integer.parseInt(properties.getProperty(PROPERTY_PREFIX + ".server.threads", "128"));
         // Listen params
         mListenAddress = properties.getProperty(PROPERTY_PREFIX + ".listen.address", "localhost");
         mListenPort = Integer.parseInt(properties.getProperty(PROPERTY_PREFIX + ".listen.port", "8080"));
