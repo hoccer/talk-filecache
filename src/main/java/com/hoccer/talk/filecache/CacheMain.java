@@ -34,6 +34,11 @@ public class CacheMain {
                description = "Port to listen on")
     int port = -1;
 
+    @Parameter(names="-initdb",
+                description = "Initialize database")
+    boolean initdb;
+
+
     private void run() {
         // load configuration
         CacheConfiguration config = initializeConfiguration();
@@ -107,6 +112,9 @@ public class CacheMain {
         }
         if(port != -1) {
             configuration.setListenPort(port);
+        }
+        if(initdb) {
+            configuration.setOrmliteInitDb(true);
         }
 
         // return the configuration

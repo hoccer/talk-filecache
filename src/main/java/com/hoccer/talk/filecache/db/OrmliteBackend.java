@@ -8,6 +8,7 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.misc.TransactionManager;
 import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.table.TableUtils;
 import org.apache.log4j.helpers.LogLog;
 
 import java.io.File;
@@ -48,8 +49,10 @@ public class OrmliteBackend extends CacheBackend {
             mConnectionSource = new JdbcConnectionSource(mConfiguration.getOrmliteUrl(),
                                                          mConfiguration.getOrmliteUser(),
                                                          mConfiguration.getOrmlitePassword());
-            //LOG.info("creating table");
-            //TableUtils.createTable(mConnectionSource, CacheFile.class);
+            if(mConfiguration.getOrmliteInitDb()) {
+                LOG.info("creating table for files");
+                TableUtils.createTable(mConnectionSource, CacheFile.class);
+            }
             LOG.info("creating dao for files");
             mDao = DaoManager.createDao(mConnectionSource, CacheFile.class);
         } catch (SQLException e) {

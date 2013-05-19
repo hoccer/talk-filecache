@@ -17,6 +17,7 @@ public class CacheConfiguration {
 
     private String mDatabaseBackend;
 
+    private boolean mOrmliteInitDb;
     private String mOrmliteUrl;
     private String mOrmliteUser;
     private String mOrmlitePassword;
@@ -63,6 +64,14 @@ public class CacheConfiguration {
 
     public String getDatabaseBackend() {
         return mDatabaseBackend;
+    }
+
+    public boolean getOrmliteInitDb() {
+        return mOrmliteInitDb;
+    }
+
+    public void setOrmliteInitDb(boolean mOrmliteInitDb) {
+        this.mOrmliteInitDb = mOrmliteInitDb;
     }
 
     public String getOrmliteUrl() {
