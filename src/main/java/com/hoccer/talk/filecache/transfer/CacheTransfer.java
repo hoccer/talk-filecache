@@ -111,22 +111,23 @@ public abstract class CacheTransfer {
 		return totalRate;
 	}
 
-    public synchronized void abort() {
-        if(this.thread != null) {
-            this.thread.interrupt();
+    public void abort() {
+        Thread thread = this.thread;
+        if(thread != null) {
+            thread.interrupt();
         }
     }
 
-    protected synchronized void transferBegin(Thread thread) {
+    protected void transferBegin(Thread thread) {
         this.thread = thread;
         rateStart();
     }
 
-    protected synchronized void transferProgress(int bytesTransfered) {
+    protected void transferProgress(int bytesTransfered) {
         rateProgress(bytesTransfered);
     }
 
-    protected synchronized void transferEnd() {
+    protected void transferEnd() {
         rateFinish();
         this.thread = null;
     }
