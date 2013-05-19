@@ -46,6 +46,7 @@ public class UploadServlet extends DownloadServlet {
             upload.perform();
         } catch (InterruptedException e) {
             log.info("upload interrupted: " + req.getPathInfo());
+            return;
         }
 
         log.info("upload finished: " + req.getPathInfo());
