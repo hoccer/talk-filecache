@@ -27,7 +27,9 @@ public class CacheFile {
 	public static final int STATE_COMPLETE = 3;
 	public static final int STATE_ABANDONED = 4;
 	public static final int STATE_EXPIRED = 5;
-	
+
+    private static final long CHECKPOINT_INTERVAL = 1000;
+
 	private static String[] stateNames = {
 		"UNKNOWN",
 		"NEW",
@@ -53,6 +55,8 @@ public class CacheFile {
     transient private Vector<CacheDownload> mDownloads = new Vector<CacheDownload>();
 
     transient private ScheduledFuture<?> mExpiryFuture;
+
+    transient private long mLastCheckpoint;
 
     @DatabaseField(columnName = "fileId", id = true)
     private String mFileId;
@@ -302,7 +306,12 @@ public class CacheFile {
 			
 			mStateChanged.signalAll();
 
-            mBackend.checkpoint(this);
+            log.info("Limit of " + mFileId + " now " + newLimit);
+            long now = System.currentTimeMillis();
+            if((now - mLastCheckpoint) >= CHECKPOINT_INTERVAL) {
+                mBackend.checkpoint(this);
+                mLastCheckpoint = now;
+            }
 		} finally {
 			mStateLock.unlock();
 		}
