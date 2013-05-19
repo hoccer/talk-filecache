@@ -13,7 +13,7 @@ public class BufferCache {
 	public static final int BUFFER_SIZE = 1 << 16;
 	
 	/** Number of buffers to be cached */
-	public static final int BUFFER_COUNT = 100;
+	public static final int BUFFER_COUNT = 256;
 	
 	/** Number of buffers in flight */
 	private static int buffersActive;
