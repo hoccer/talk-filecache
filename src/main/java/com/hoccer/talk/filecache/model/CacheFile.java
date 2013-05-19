@@ -318,6 +318,7 @@ public class CacheFile {
 		mStateLock.lock();
 		try {
             if(newLimit > mLimit) {
+                log.debug("limit is now " + newLimit + " was " + mLimit);
                 mLimit = newLimit;
             }
 			
