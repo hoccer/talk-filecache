@@ -275,7 +275,9 @@ public class CacheFile {
 		mStateLock.lock();
 		try {
 			if(mState == STATE_UPLOADING) {
-				switchState(STATE_COMPLETE, "upload finished");
+                if(mLimit >= mContentLength) {
+				    switchState(STATE_COMPLETE, "upload finished");
+                }
 			}
 			
 			scheduleExpiry();
