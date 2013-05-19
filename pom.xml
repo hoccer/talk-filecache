@@ -24,6 +24,12 @@
       <artifactId>hoccer-talk-common</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
+    <!-- Logging -->
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>${log4j.version}</version>
+    </dependency>
     <!-- Servlet API -->
     <dependency>
         <groupId>javax.servlet</groupId>
@@ -54,6 +60,28 @@
       <artifactId>better-jsonrpc-websocket</artifactId>
       <version>${better.jsonrpc.version}</version>
     </dependency>
+    <!-- Command line parsing -->
+    <dependency>
+      <groupId>com.beust</groupId>
+      <artifactId>jcommander</artifactId>
+      <version>${jcommander.version}</version>
+    </dependency>
+    <!-- Jetty server framework -->
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-server</artifactId>
+      <version>${jetty.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-websocket</artifactId>
+      <version>${jetty.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-servlet</artifactId>
+      <version>${jetty.version}</version>
+    </dependency>
   </dependencies>
   
   <build>
@@ -76,6 +104,28 @@
         <configuration>
           <webXml>src\main\webapp\WEB-INF\web.xml</webXml>        
         </configuration>
+      </plugin>
+      <!-- Create JAR with dependencies -->
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+          <archive>
+            <manifest>
+              <mainClass>com.hoccer.talk.filecache.CacheMain</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

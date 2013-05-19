@@ -1,11 +1,15 @@
 package com.hoccer.talk.filecache;
 
 import com.hoccer.talk.filecache.model.CacheFile;
+import com.hoccer.talk.logging.HoccerLoggers;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.util.List;
 
 public abstract class CacheBackend {
+
+    protected static final Logger LOG = Logger.getLogger(CacheBackend.class);
 
     /** Root directory of file store */
     private File mDataDirectory = null;
@@ -36,6 +40,8 @@ public abstract class CacheBackend {
 
     /** Get a list of all files in storage (XXX eliminate / replace with getAllActive) */
     public abstract List<CacheFile> getAll();
+
+    public abstract void start();
 
     /**
      * Get the file for the given id

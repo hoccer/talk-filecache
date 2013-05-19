@@ -1,11 +1,14 @@
 package com.hoccer.talk.filecache.db;
 
 import com.hoccer.talk.filecache.CacheBackend;
+import com.hoccer.talk.filecache.CacheConfiguration;
 import com.hoccer.talk.filecache.model.CacheFile;
+import com.hoccer.talk.logging.HoccerLoggers;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.misc.TransactionManager;
+import com.j256.ormlite.table.TableUtils;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -13,9 +16,11 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.Callable;
+import java.util.logging.Logger;
 
 public class OrmliteBackend extends CacheBackend {
 
+    private CacheConfiguration mConfiguration;
     private JdbcConnectionSource mConnectionSource;
     private Dao<CacheFile, String> mDao;
     private Hashtable<String, CacheFile> mAllFiles;
@@ -23,9 +28,24 @@ public class OrmliteBackend extends CacheBackend {
     public OrmliteBackend(File dataDir) {
         super(dataDir);
         mAllFiles = new Hashtable<String, CacheFile>();
+    }
+
+    public OrmliteBackend(CacheConfiguration configuration) {
+        super(new File(configuration.getDataDirectory()));
+        mAllFiles = new Hashtable<String, CacheFile>();
+        mConfiguration = configuration;
+    }
+
+    @Override
+    public void start() {
         try {
-            mConnectionSource = new JdbcConnectionSource("jdbc:postgresql://localhost/talk", "talk", "talk");
+            LOG.info("Creating connection source for " + mConfiguration.getOrmliteUrl());
+            mConnectionSource = new JdbcConnectionSource(mConfiguration.getOrmliteUrl(),
+                                                         mConfiguration.getOrmliteUser(),
+                                                         mConfiguration.getOrmlitePassword());
+            //LOG.info("Creating table");
             //TableUtils.createTable(mConnectionSource, CacheFile.class);
+            LOG.info("Creating dao");
             mDao = DaoManager.createDao(mConnectionSource, CacheFile.class);
         } catch (SQLException e) {
             e.printStackTrace();

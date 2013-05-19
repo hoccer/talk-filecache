@@ -4,6 +4,7 @@ import com.google.appengine.api.blobstore.ByteRange;
 import com.google.appengine.api.blobstore.RangeFormatException;
 import com.hoccer.talk.filecache.model.CacheFile;
 import com.hoccer.talk.filecache.transfer.CacheDownload;
+import org.apache.log4j.Logger;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -12,12 +13,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 @WebServlet(urlPatterns = "/download/*")
 public class DownloadServlet extends HttpServlet {
 
-    static Logger log = Logger.getLogger(DownloadServlet.class.getSimpleName());
+    static Logger log = Logger.getLogger(DownloadServlet.class);
 
     @Override
     protected void doHead(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

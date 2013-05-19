@@ -17,6 +17,10 @@ public class MemoryBackend extends CacheBackend {
     }
 
     @Override
+    public void start() {
+    }
+
+    @Override
     public CacheFile forId(String id, boolean create) {
         CacheFile res = null;
 

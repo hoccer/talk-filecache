@@ -1,12 +1,12 @@
 package com.hoccer.talk.filecache.transfer;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.hoccer.talk.filecache.model.CacheFile;
+import org.apache.log4j.Logger;
 
 /**
  * Active transfer to or from the cache
@@ -19,7 +19,7 @@ public abstract class CacheTransfer {
 	 * Common logger for subclasses
 	 */
 	protected static Logger log
-		= Logger.getLogger(CacheTransfer.class.getSimpleName());
+		= Logger.getLogger(CacheTransfer.class);
 	
 	/**
 	 * Atomic counter for id assignment

@@ -11,13 +11,13 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Logger;
 
 import com.hoccer.talk.filecache.CacheBackend;
 import com.hoccer.talk.filecache.transfer.CacheDownload;
 import com.hoccer.talk.filecache.transfer.CacheUpload;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import org.apache.log4j.Logger;
 
 @DatabaseTable(tableName = "file")
 public class CacheFile {
@@ -41,7 +41,7 @@ public class CacheFile {
 		= Executors.newSingleThreadScheduledExecutor();
 			
 	protected static Logger log
-		= Logger.getLogger(CacheFile.class.getSimpleName());
+		= Logger.getLogger(CacheFile.class);
 
     transient private CacheBackend mBackend;
 
