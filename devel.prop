@@ -20,8 +20,13 @@ talk.filecache.ormlite.password = talk
 log4j.rootLogger=DEBUG, CONSOLE
 
 # Specific loggers
+log4j.logger.com.hoccer.talk.filecache.CacheBackend = INFO
+log4j.logger.com.hoccer.talk.filecache.model.CacheFile = DEBUG
 log4j.logger.com.j256.ormlite.misc.TransactionManager = INFO
 log4j.logger.com.j256.ormlite.stmt.mapped.BaseMappedStatement = INFO
+log4j.logger.com.j256.ormlite.stmt.StatementBuilder = INFO
+log4j.logger.com.j256.ormlite.stmt.StatementExecutor = INFO
+log4j.logger.com.j256.ormlite.stmt.SelectIterator = INFO
 
 # Console logging
 log4j.appender.CONSOLE=org.apache.log4j.ConsoleAppender
