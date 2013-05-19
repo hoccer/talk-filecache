@@ -24,13 +24,13 @@ public class ControlServlet extends WebSocketServlet {
 
         mJsonMapper = new ObjectMapper();
 
-        mRpcServer = new JsonRpcServer(mJsonMapper, ICacheControl.class);
+        mRpcServer = new JsonRpcServer(ICacheControl.class);
     }
 
     @Override
     public WebSocket doWebSocketConnect(HttpServletRequest request, String protocol) {
         if(protocol.equals("com.hoccer.talk.filecache.control.v1")) {
-            JsonRpcWsConnection connection = new JsonRpcWsConnection();
+            JsonRpcWsConnection connection = new JsonRpcWsConnection(mJsonMapper);
             ControlConnection handler = new ControlConnection(this, connection);
             connection.bindServer(mRpcServer, handler);
             return connection;
