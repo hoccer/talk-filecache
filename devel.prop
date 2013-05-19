@@ -17,7 +17,7 @@ talk.filecache.ormlite.user = talk
 talk.filecache.ormlite.password = talk
 
 # Logging
-log4j.rootLogger=DEBUG, CONSOLE
+log4j.rootLogger=INFO, CONSOLE
 
 # Specific loggers
 log4j.logger.com.hoccer.talk.filecache.CacheBackend = INFO
