@@ -65,7 +65,7 @@ public class UploadServlet extends DownloadServlet {
             return;
         }
 
-        backend.remove(file);
+        file.delete();
     }
 
     private ByteRange beginPut(CacheFile file, HttpServletRequest req, HttpServletResponse resp)

@@ -41,7 +41,7 @@ public class StatusServlet extends HttpServlet {
 		
 		w.write(">>>>>>>>>>>>>>> Hoccer Filecache <<<<<<<<<<<<<<<\n\n");
 		
-		List<CacheFile> allFiles = backend.getAll();
+		List<CacheFile> allFiles = backend.getActiveFiles();
 		
 		Collections.sort(allFiles, getSorting());
 		

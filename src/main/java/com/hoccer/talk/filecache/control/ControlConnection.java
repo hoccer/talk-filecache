@@ -30,7 +30,7 @@ public class ControlConnection implements ICacheControl {
 
     @Override
     public FileHandles createFileForStorage(String accountId, int fileSize) {
-        CacheFile file = mBackend.forId(UUID.randomUUID().toString(), true);
+        CacheFile file = mBackend.getByFileId(UUID.randomUUID().toString(), true);
         FileHandles handles = new FileHandles();
         handles.fileId = file.getFileId();
         handles.uploadId = file.getUploadId();
@@ -41,7 +41,7 @@ public class ControlConnection implements ICacheControl {
 
     @Override
     public FileHandles createFileForTransfer(String accountId, int fileSize) {
-        CacheFile file = mBackend.forId(UUID.randomUUID().toString(), true);
+        CacheFile file = mBackend.getByFileId(UUID.randomUUID().toString(), true);
         FileHandles handles = new FileHandles();
         handles.fileId = file.getFileId();
         handles.uploadId = file.getUploadId();
@@ -52,7 +52,8 @@ public class ControlConnection implements ICacheControl {
 
     @Override
     public void deleteFile(String fileId) {
-        CacheFile file = mBackend.forId(fileId, false);
+        CacheFile file = mBackend.getByFileId(fileId, false);
+        file.delete();
     }
 
     @Override

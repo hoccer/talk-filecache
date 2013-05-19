@@ -28,6 +28,7 @@ public class CacheFile {
 	public static final int STATE_COMPLETE = 3;
 	public static final int STATE_ABANDONED = 4;
 	public static final int STATE_EXPIRED = 5;
+    public static final int STATE_DELETED = 6;
 
 	private static String[] stateNames = {
 		"UNKNOWN",
@@ -35,7 +36,8 @@ public class CacheFile {
 		"UPLOADING",
 		"COMPLETE",
 		"ABANDONED",
-		"EXPIRED"
+		"EXPIRED",
+        "DELETED"
 	};
 	
 	private static ScheduledExecutorService expiryExecutor
@@ -100,15 +102,33 @@ public class CacheFile {
 		mFileId = pUUID;
 	}
 
-    public void setBackend(CacheBackend backend) {
+    public void onActivate(CacheBackend backend) {
+        log.debug("onActivate(" + mFileId + ")");
         mBackend = backend;
         CacheConfiguration configuration = mBackend.getConfiguration();
         mCheckpointInterval = configuration.getDataCheckpointInterval();
     }
 
+    public void onDeactivate() {
+        log.debug("onDeactivate(" + mFileId + ")");
+        if(mUpload != null) {
+            mUpload.abort();
+        }
+        for(CacheDownload download: mDownloads) {
+            download.abort();
+        }
+        if(mExpiryFuture != null) {
+            mExpiryFuture.cancel(false);
+        }
+    }
+
 	public int getState() {
 		return mState;
 	}
+
+    public boolean isActive() {
+        return mDownloads.size() > 0 || mUpload != null;
+    }
 	
 	public boolean isAbandoned() {
 		return mState == STATE_ABANDONED;
@@ -170,7 +190,7 @@ public class CacheFile {
 		return new Vector<CacheDownload>(mDownloads);
 	}
 	
-	private File getFile() {
+	public File getFile() {
 		return new File(mBackend.getDataDirectory(), mFileId);
 	}
 	
@@ -181,19 +201,11 @@ public class CacheFile {
         mBackend.checkpoint(this);
 	}
 	
-	private void considerRemoval() {
-		if(mState == STATE_EXPIRED) {
-			if(mDownloads.size() == 0) {
-				mBackend.remove(this);
-			}
-		}
-		if(mState == STATE_ABANDONED) {
-			if(mDownloads.size() == 0) {
-				mBackend.remove(this);
-			}
-		}
+	private void considerDeactivate() {
+        if(!isActive()) {
+            mBackend.deactivate(this);
+        }
 	}
-	
 	
 	public void setupExpiry(int secondsFromNow) {
 		Date now = new Date();
@@ -217,13 +229,12 @@ public class CacheFile {
 				            mExpiryTime.getTime() - System.currentTimeMillis(),
 				            TimeUnit.MILLISECONDS);
 	}
-	
+
 	private void expire() {
 		mStateLock.lock();
 		try {
 			switchState(STATE_EXPIRED, "expiry time reached");
-			this.getFile().delete();
-			considerRemoval();
+			considerDeactivate();
 		} finally {
 			mStateLock.unlock();
 		}
@@ -253,7 +264,7 @@ public class CacheFile {
 			
 			mStateChanged.signalAll();
 			
-			considerRemoval();
+			considerDeactivate();
 		} finally {
 			mStateLock.unlock();
 		}
@@ -272,7 +283,7 @@ public class CacheFile {
 			
 			mStateChanged.signalAll();
 			
-			considerRemoval();
+			considerDeactivate();
 		} finally {
 			mStateLock.unlock();
 		}
@@ -291,26 +302,26 @@ public class CacheFile {
 	
 	public void downloadAborted(CacheDownload download) {
 		mDownloads.remove(download);
-		considerRemoval();
+		considerDeactivate();
 	}
 	
 	public void downloadFinished(CacheDownload download) {
 		mDownloads.remove(download);
-		considerRemoval();
+		considerDeactivate();
 	}
 	
 	public void updateLimit(int newLimit) {
 		mStateLock.lock();
 		try {
             if(newLimit > mLimit) {
-			    mLimit = newLimit;
+                mLimit = newLimit;
             }
 			
 			mStateChanged.signalAll();
 
-            log.info("Limit of " + mFileId + " now " + newLimit);
             long now = System.currentTimeMillis();
             if((now - mLastCheckpoint) >= mCheckpointInterval) {
+                log.debug("checkpointing " + mFileId + " at " + mLimit);
                 mBackend.checkpoint(this);
                 mLastCheckpoint = now;
             }
@@ -318,7 +329,18 @@ public class CacheFile {
 			mStateLock.unlock();
 		}
 	}
-	
+
+    public void delete() {
+        mStateLock.lock();
+        try {
+            switchState(STATE_DELETED, "deleted");
+
+            mBackend.deactivate(this);
+        } finally {
+            mStateLock.unlock();
+        }
+    }
+
 	public boolean waitForData(int wantedPosition) throws InterruptedException {
 		// acquire state lock
 		mStateLock.lock();
@@ -326,7 +348,7 @@ public class CacheFile {
 		try {
 			// cases where progress has been
 			// made already or will never be made
-			if(mState == STATE_COMPLETE || mState == STATE_EXPIRED) {
+			if(mState == STATE_COMPLETE) {
 				if(mLimit > wantedPosition) {
 					return true;
 				} else {
@@ -338,9 +360,15 @@ public class CacheFile {
 					return true;
 				}
 			}
+            if(mState == STATE_DELETED) {
+                return false;
+            }
 			if(mState == STATE_ABANDONED) {
 				return false;
 			}
+            if(mState == STATE_EXPIRED) {
+                return false;
+            }
 			
 			// wait for state change
 		    mStateChanged.await();

@@ -35,19 +35,19 @@ public abstract class CacheBackend {
         return mDataDirectory;
     }
 
-    /** Convenience wrapper for forId() */
+    /** Convenience wrapper for getByFileId() */
     public CacheFile forPathInfo(String pathInfo, boolean create) {
         if(pathInfo.length() == 1) {
             return null;
         }
 
-        return forId(pathInfo.substring(1), create);
+        return getByFileId(pathInfo.substring(1), create);
     }
 
-    /** Get a list of all files in storage (XXX eliminate / replace with getAllActive) */
-    public abstract List<CacheFile> getAll();
-
     public abstract void start();
+
+    /** Get a list of all files in memory */
+    public abstract List<CacheFile> getActiveFiles();
 
     /**
      * Get the file for the given id
@@ -56,7 +56,10 @@ public abstract class CacheBackend {
      * @param create - true if file should be created if not present
      * @return file corresponding to ID or null
      */
-    public abstract CacheFile forId(String id, boolean create);
+    public abstract CacheFile getByFileId(String id, boolean create);
+
+    public abstract CacheFile getByUploadId(String id);
+    public abstract CacheFile getByDownloadId(String id);
 
     /**
      * Checkpoint the given files state in the database
@@ -68,11 +71,8 @@ public abstract class CacheBackend {
      */
     public abstract void checkpoint(CacheFile file);
 
-    /**
-     * Remove a file from the store permanently
-     *
-     * @param file to remove
-     */
-    public abstract void remove(CacheFile file);
+    public abstract void deactivate(CacheFile file);
+
+    public abstract void delete(CacheFile file);
 
 }

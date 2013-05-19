@@ -4,7 +4,6 @@ import com.hoccer.talk.filecache.CacheBackend;
 import com.hoccer.talk.filecache.CacheConfiguration;
 import com.hoccer.talk.filecache.model.CacheFile;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -22,7 +21,12 @@ public class MemoryBackend extends CacheBackend {
     }
 
     @Override
-    public CacheFile forId(String id, boolean create) {
+    public Vector<CacheFile> getActiveFiles() {
+        return new Vector<CacheFile>(mFiles.values());
+    }
+
+    @Override
+    public CacheFile getByFileId(String id, boolean create) {
         CacheFile res = null;
 
         synchronized (mFiles) {
@@ -34,10 +38,20 @@ public class MemoryBackend extends CacheBackend {
                     mFiles.put(id, res);
                 }
             }
-            res.setBackend(this);
+            res.onActivate(this);
         }
 
         return res;
+    }
+
+    @Override
+    public CacheFile getByUploadId(String id) {
+        return null;
+    }
+
+    @Override
+    public CacheFile getByDownloadId(String id) {
+        return null;
     }
 
     @Override
@@ -45,15 +59,12 @@ public class MemoryBackend extends CacheBackend {
     }
 
     @Override
-    public void remove(CacheFile f) {
-        if(mFiles.containsKey(f.getFileId())) {
-            mFiles.remove(f.getFileId());
-        }
+    public void deactivate(CacheFile file) {
     }
 
     @Override
-    public Vector<CacheFile> getAll() {
-        return new Vector<CacheFile>(mFiles.values());
+    public void delete(CacheFile file) {
+        mFiles.remove(file.getFileId());
     }
 
 }
