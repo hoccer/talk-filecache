@@ -69,7 +69,9 @@ public class CacheDownload extends CacheTransfer {
                 while ((absoluteLimit != cacheFile.getContentLength())
                         && (limit < (absolutePosition + bytesWanted))) {
                     Thread.sleep(100);
-                    cacheFile.waitForData(absoluteLimit + bytesWanted);
+                    if(!cacheFile.waitForData(absoluteLimit + bytesWanted)) {
+                        throw new InterruptedException("File no longer available");
+                    }
                     limit = cacheFile.getLimit();
                     absoluteLimit = Math.min(limit, absoluteEnd);
                 }
@@ -92,7 +94,10 @@ public class CacheDownload extends CacheTransfer {
             // close file stream
 			inFile.close();
 			
-		} catch (IOException e) {
+		} catch (InterruptedException e) {
+            cacheFile.downloadAborted(this);
+            throw e;
+        } catch (IOException e) {
             // notify the file of the abort
 			cacheFile.downloadAborted(this);
             // rethrow to finish the http request
