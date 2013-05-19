@@ -25,13 +25,8 @@ public class OrmliteBackend extends CacheBackend {
     private Dao<CacheFile, String> mDao;
     private Hashtable<String, CacheFile> mAllFiles;
 
-    public OrmliteBackend(File dataDir) {
-        super(dataDir);
-        mAllFiles = new Hashtable<String, CacheFile>();
-    }
-
     public OrmliteBackend(CacheConfiguration configuration) {
-        super(new File(configuration.getDataDirectory()));
+        super(configuration);
         mAllFiles = new Hashtable<String, CacheFile>();
         mConfiguration = configuration;
     }
@@ -79,15 +74,15 @@ public class OrmliteBackend extends CacheBackend {
                                 if(res == null) {
                                     if(create) {
                                         res = new CacheFile(id);
-                                        res.setBackend(OrmliteBackend.this);
                                         mDao.create(res);
                                     }
                                 }
+                                res.setBackend(OrmliteBackend.this);
                                 return res;
                             }
                         });
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOG.error("SQL exception", e);
             }
         }
 
@@ -105,7 +100,7 @@ public class OrmliteBackend extends CacheBackend {
         try {
             mDao.update(file);
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("SQL exception", e);
         }
     }
 
@@ -114,7 +109,7 @@ public class OrmliteBackend extends CacheBackend {
         try {
             mDao.delete(file);
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("SQL exception", e);
         }
         mAllFiles.remove(file.getFileId());
     }

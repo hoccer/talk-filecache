@@ -1,6 +1,7 @@
 package com.hoccer.talk.filecache.db;
 
 import com.hoccer.talk.filecache.CacheBackend;
+import com.hoccer.talk.filecache.CacheConfiguration;
 import com.hoccer.talk.filecache.model.CacheFile;
 
 import java.io.File;
@@ -12,8 +13,8 @@ public class MemoryBackend extends CacheBackend {
     private HashMap<String, CacheFile> mFiles
             = new HashMap<String, CacheFile>();
 
-    public MemoryBackend(File dataDir) {
-        super(dataDir);
+    public MemoryBackend(CacheConfiguration config) {
+        super(config);
     }
 
     @Override
@@ -30,10 +31,10 @@ public class MemoryBackend extends CacheBackend {
             } else {
                 if(create) {
                     res = new CacheFile(id);
-                    res.setBackend(this);
                     mFiles.put(id, res);
                 }
             }
+            res.setBackend(this);
         }
 
         return res;

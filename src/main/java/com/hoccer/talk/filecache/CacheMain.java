@@ -5,24 +5,18 @@ import com.beust.jcommander.Parameter;
 import com.hoccer.talk.filecache.control.ControlServlet;
 import com.hoccer.talk.filecache.db.MemoryBackend;
 import com.hoccer.talk.filecache.db.OrmliteBackend;
-import com.hoccer.talk.logging.HoccerLoggers;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.ContextHandler;
-import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHandler;
-import org.eclipse.jetty.websocket.WebSocketHandler;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Properties;
-import java.util.logging.Level;
 
 public class CacheMain {
 
@@ -45,7 +39,7 @@ public class CacheMain {
         CacheConfiguration config = initializeConfiguration();
 
         // select and instantiate database backend
-        CacheBackend db = initializeDatabase(config);
+        CacheBackend db = initializeBackend(config);
 
         // log about jetty init
         LOG.info("Configuring jetty");
@@ -53,6 +47,7 @@ public class CacheMain {
         // create jetty instance
         Server s = new Server(new InetSocketAddress(config.getListenAddress(),
                                                     config.getListenPort()));
+        s.setThreadPool(new QueuedThreadPool(32));
 
         // create servlet context
         ServletContextHandler context = new ServletContextHandler();
@@ -89,15 +84,15 @@ public class CacheMain {
         if(config != null) {
             Properties properties = null;
             // load the property file
-            LOG.info("Loading configuration from file " + config);
+            LOG.info("Configuring from file " + config);
             try {
                 FileInputStream configIn = new FileInputStream(config);
                 properties = new Properties();
                 properties.load(configIn);
             } catch (FileNotFoundException e) {
-                LOG.error("Could not load configuration", e);
+                LOG.error("Could not load " + config, e);
             } catch (IOException e) {
-                LOG.error("Could not load configuration", e);
+                LOG.error("Could not load " + config, e);
             }
             // if we could load it then configure using it
             if(properties != null) {
@@ -106,6 +101,7 @@ public class CacheMain {
         }
 
         // command line overrides
+        LOG.info("Configuring from commandline");
         if(listen != null) {
             configuration.setListenAddress(listen);
         }
@@ -117,16 +113,16 @@ public class CacheMain {
         return configuration;
     }
 
-    private CacheBackend initializeDatabase(CacheConfiguration config) {
-        String backend = config.getDatabaseBackend();
+    private CacheBackend initializeBackend(CacheConfiguration configuration) {
+        String backend = configuration.getDatabaseBackend();
         LOG.info("Creating backend " + backend);
         if(backend.equals("ormlite")) {
-            return new OrmliteBackend(config);
+            return new OrmliteBackend(configuration);
         }
         if(backend.equals("memory")) {
-            return new MemoryBackend(new File(config.getDataDirectory()));
+            return new MemoryBackend(configuration);
         }
-        throw new RuntimeException("Unknown database backend: " + backend);
+        throw new RuntimeException("Unknown backend: " + backend);
     }
 
     public static void main(String[] args) {

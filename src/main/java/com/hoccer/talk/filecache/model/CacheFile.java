@@ -13,6 +13,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.hoccer.talk.filecache.CacheBackend;
+import com.hoccer.talk.filecache.CacheConfiguration;
 import com.hoccer.talk.filecache.transfer.CacheDownload;
 import com.hoccer.talk.filecache.transfer.CacheUpload;
 import com.j256.ormlite.field.DatabaseField;
@@ -27,8 +28,6 @@ public class CacheFile {
 	public static final int STATE_COMPLETE = 3;
 	public static final int STATE_ABANDONED = 4;
 	public static final int STATE_EXPIRED = 5;
-
-    private static final long CHECKPOINT_INTERVAL = 1000;
 
 	private static String[] stateNames = {
 		"UNKNOWN",
@@ -57,6 +56,7 @@ public class CacheFile {
     transient private ScheduledFuture<?> mExpiryFuture;
 
     transient private long mLastCheckpoint;
+    transient private long mCheckpointInterval;
 
     @DatabaseField(columnName = "fileId", id = true)
     private String mFileId;
@@ -102,8 +102,10 @@ public class CacheFile {
 
     public void setBackend(CacheBackend backend) {
         mBackend = backend;
+        CacheConfiguration configuration = mBackend.getConfiguration();
+        mCheckpointInterval = configuration.getDataCheckpointInterval();
     }
-	
+
 	public int getState() {
 		return mState;
 	}
@@ -308,7 +310,7 @@ public class CacheFile {
 
             log.info("Limit of " + mFileId + " now " + newLimit);
             long now = System.currentTimeMillis();
-            if((now - mLastCheckpoint) >= CHECKPOINT_INTERVAL) {
+            if((now - mLastCheckpoint) >= mCheckpointInterval) {
                 mBackend.checkpoint(this);
                 mLastCheckpoint = now;
             }

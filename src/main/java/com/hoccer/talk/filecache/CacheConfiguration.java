@@ -11,6 +11,7 @@ public class CacheConfiguration {
     private int    mListenPort    = 8080;
 
     private String mDataDirectory = null;
+    private long   mDataCheckpointInterval = 2000;
 
     private String mDatabaseBackend;
 
@@ -40,6 +41,14 @@ public class CacheConfiguration {
 
     public void setDataDirectory(String dataDirectory) {
         this.mDataDirectory = dataDirectory;
+    }
+
+    public long getDataCheckpointInterval() {
+        return mDataCheckpointInterval;
+    }
+
+    public void setDataCheckpointInterval(long mDataCheckpointInterval) {
+        this.mDataCheckpointInterval = mDataCheckpointInterval;
     }
 
     public String getDatabaseBackend() {
@@ -76,6 +85,7 @@ public class CacheConfiguration {
         mListenPort = Integer.parseInt(properties.getProperty(PROPERTY_PREFIX + ".listen.port", "8080"));
         // Data directory
         mDataDirectory = properties.getProperty(PROPERTY_PREFIX + ".data.directory", "/srv/filecache");
+        mDataCheckpointInterval = Long.parseLong(properties.getProperty(PROPERTY_PREFIX + ".data.checkpointInterval", "2000"));
         // Database
         mDatabaseBackend = properties.getProperty(PROPERTY_PREFIX + ".database.backend", "memory");
         // ORMlite

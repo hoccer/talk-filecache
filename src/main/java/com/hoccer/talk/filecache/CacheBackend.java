@@ -1,7 +1,6 @@
 package com.hoccer.talk.filecache;
 
 import com.hoccer.talk.filecache.model.CacheFile;
-import com.hoccer.talk.logging.HoccerLoggers;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -11,8 +10,10 @@ public abstract class CacheBackend {
 
     protected static final Logger LOG = Logger.getLogger(CacheBackend.class);
 
+    private CacheConfiguration mConfiguration;
+
     /** Root directory of file store */
-    private File mDataDirectory = null;
+    private File mDataDirectory;
 
     /**
      * Main superconstructor
@@ -20,8 +21,13 @@ public abstract class CacheBackend {
      * Implementations must call this with the data directory.
      *
      */
-    protected CacheBackend(File dataDirectory) {
-        mDataDirectory = dataDirectory;
+    protected CacheBackend(CacheConfiguration configuration) {
+        mConfiguration = configuration;
+        mDataDirectory = new File(configuration.getDataDirectory());
+    }
+
+    public CacheConfiguration getConfiguration() {
+        return mConfiguration;
     }
 
     /** @return the data directory for this backend */
