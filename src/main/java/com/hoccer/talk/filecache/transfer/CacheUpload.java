@@ -88,7 +88,7 @@ public class CacheUpload extends CacheTransfer {
 				
 				transferProgress(bytesRead);
 				
-				cacheFile.updateLimit(absolutePosition);
+				cacheFile.updateLimit(absolutePosition, outFile);
 			}
 			
 			outFile.close();

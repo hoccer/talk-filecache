@@ -310,7 +310,8 @@ public class CacheFile {
 		considerDeactivate();
 	}
 	
-	public void updateLimit(int newLimit) {
+	public void updateLimit(int newLimit, RandomAccessFile raf) throws IOException {
+
 		mStateLock.lock();
 		try {
             if(newLimit > mLimit) {
@@ -322,6 +323,7 @@ public class CacheFile {
             long now = System.currentTimeMillis();
             if((now - mLastCheckpoint) >= mCheckpointInterval) {
                 log.debug("checkpointing " + mFileId + " at " + mLimit);
+                raf.getFD().sync();
                 mBackend.checkpoint(this);
                 mLastCheckpoint = now;
             }
