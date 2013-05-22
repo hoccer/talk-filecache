@@ -24,9 +24,7 @@ public class UploadServlet extends DownloadServlet {
             throws ServletException, IOException {
         log.info("upload starts: " + req.getPathInfo());
 
-        CacheBackend backend = getCacheBackend();
-
-        CacheFile file = backend.forPathInfo(req.getPathInfo(), true);
+        CacheFile file = getFileForUpload(req, resp);
         if(file == null) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND,
                     "File can not exist in cache");
@@ -160,6 +158,36 @@ public class UploadServlet extends DownloadServlet {
         } else {
             resp.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY); // "resume incomplete"
         }
+    }
+
+    private CacheFile getFileForUpload(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        // get the various things we need
+        CacheBackend backend = getCacheBackend();
+        String pathInfo = req.getPathInfo();
+        String uploadId = pathInfo.substring(1);
+        // try to get by upload id
+        CacheFile file = backend.getByUploadId(uploadId);
+        // if not found try it as a file id
+        if(file == null) {
+            file = backend.getByFileId(uploadId, true);
+        }
+        // err if not found
+        if(file == null) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND,
+                    "File does not exist");
+            return null;
+        }
+        // err if file is gone
+        int fileState = file.getState();
+        if(fileState == CacheFile.STATE_EXPIRED
+                || fileState == CacheFile.STATE_ABANDONED) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND,
+                    "File does not exist");
+            return null;
+        }
+        // return
+        return file;
     }
 
     private CacheBackend getCacheBackend() {

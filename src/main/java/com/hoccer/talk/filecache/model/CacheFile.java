@@ -30,16 +30,21 @@ public class CacheFile {
 	public static final int STATE_EXPIRED = 5;
     public static final int STATE_DELETED = 6;
 
-	private static String[] stateNames = {
-		"UNKNOWN",
-		"NEW",
-		"UPLOADING",
-		"COMPLETE",
-		"ABANDONED",
-		"EXPIRED",
-        "DELETED"
-	};
-	
+    private static String[] stateNames = {
+            "UNKNOWN",
+            "NEW",
+            "UPLOADING",
+            "COMPLETE",
+            "ABANDONED",
+            "EXPIRED",
+            "DELETED"
+    };
+
+
+    public static final String TYPE_STORAGE  = "storage";
+    public static final String TYPE_TRANSFER = "transfer";
+
+
 	private static ScheduledExecutorService expiryExecutor
 		= Executors.newSingleThreadScheduledExecutor();
 			
@@ -62,6 +67,10 @@ public class CacheFile {
 
     @DatabaseField(columnName = "fileId", id = true)
     private String mFileId;
+
+    @DatabaseField(columnName = "fileType")
+    private String mFileType;
+
     @DatabaseField(columnName = "uploadId", unique = true)
     private String mUploadId;
     @DatabaseField(columnName = "downloadId", unique = true)
@@ -92,14 +101,18 @@ public class CacheFile {
 
         mContentLength = -1;
 
+        mAccountId = null;
         mFileId = UUID.randomUUID().toString();
         mUploadId = UUID.randomUUID().toString();
         mDownloadId = UUID.randomUUID().toString();
     }
 
-	public CacheFile(String pUUID) {
+	public CacheFile(String fileId, String accountId, String contentType, int contentLength) {
 		this();
-		mFileId = pUUID;
+		mFileId = fileId;
+        mAccountId = accountId;
+        mContentType = contentType;
+        mContentLength = contentLength;
 	}
 
     public void onActivate(CacheBackend backend) {
@@ -156,6 +169,14 @@ public class CacheFile {
 
     public String getAccountId() {
         return mAccountId;
+    }
+
+    public String getFileType() {
+        return mFileType;
+    }
+
+    public void setFileType(String fileType) {
+        this.mFileType = fileType;
     }
 
     public String getContentType() {

@@ -27,21 +27,7 @@ public class MemoryBackend extends CacheBackend {
 
     @Override
     public CacheFile getByFileId(String id, boolean create) {
-        CacheFile res = null;
-
-        synchronized (mFiles) {
-            if(mFiles.containsKey(id)) {
-                res = mFiles.get(id);
-            } else {
-                if(create) {
-                    res = new CacheFile(id);
-                    mFiles.put(id, res);
-                }
-            }
-            res.onActivate(this);
-        }
-
-        return res;
+        return null;
     }
 
     @Override

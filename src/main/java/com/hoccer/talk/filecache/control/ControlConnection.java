@@ -29,24 +29,38 @@ public class ControlConnection implements ICacheControl {
     }
 
     @Override
-    public FileHandles createFileForStorage(String accountId, int fileSize) {
+    public FileHandles createFileForStorage(String accountId, String contentType, int contentLength) {
         CacheFile file = mBackend.getByFileId(UUID.randomUUID().toString(), true);
+
+        file.setFileType(CacheFile.TYPE_STORAGE);
+        file.setContentType(contentType);
+        file.setContentLength(contentLength);
+
+        mBackend.checkpoint(file);
+
         FileHandles handles = new FileHandles();
         handles.fileId = file.getFileId();
         handles.uploadId = file.getUploadId();
         handles.downloadId = file.getDownloadId();
-        mBackend.checkpoint(file);
+
         return handles;
     }
 
     @Override
-    public FileHandles createFileForTransfer(String accountId, int fileSize) {
+    public FileHandles createFileForTransfer(String accountId, String contentType, int contentLength) {
         CacheFile file = mBackend.getByFileId(UUID.randomUUID().toString(), true);
+
+        file.setFileType(CacheFile.TYPE_TRANSFER);
+        file.setContentType(contentType);
+        file.setContentLength(contentLength);
+
+        mBackend.checkpoint(file);
+
         FileHandles handles = new FileHandles();
         handles.fileId = file.getFileId();
         handles.uploadId = file.getUploadId();
         handles.downloadId = file.getDownloadId();
-        mBackend.checkpoint(file);
+
         return handles;
     }
 

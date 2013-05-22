@@ -154,7 +154,7 @@ public class OrmliteBackend extends CacheBackend {
                                 // not found? create if we want to
                                 if(res == null) {
                                     if(create) {
-                                        res = new CacheFile(id);
+                                        res = new CacheFile(id, null, null, -1);
                                         mDao.create(res);
                                     }
                                 }

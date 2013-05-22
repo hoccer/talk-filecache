@@ -24,7 +24,7 @@ public class DownloadServlet extends HttpServlet {
         log.info("status request: " + req.getPathInfo());
 
         // get the relevant file
-        CacheFile file = getFileForRequest(req, resp);
+        CacheFile file = getFileForDownload(req, resp);
         // abort if we don't have one
         if(file == null) {
             return;
@@ -44,7 +44,7 @@ public class DownloadServlet extends HttpServlet {
         log.info("download starts: " + req.getPathInfo());
 
         // get the relevant file
-        CacheFile file = getFileForRequest(req, resp);
+        CacheFile file = getFileForDownload(req, resp);
         // abort if we don't have one
         if(file == null) {
             return;
@@ -136,18 +136,25 @@ public class DownloadServlet extends HttpServlet {
                         "/" + file.getContentLength());
     }
 
-    private CacheFile getFileForRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private CacheFile getFileForDownload(HttpServletRequest req, HttpServletResponse resp)
+        throws ServletException, IOException {
+        // get all the various things we need
         CacheBackend backend = getCacheBackend();
-
-        // get the file and check that we have one
-        CacheFile file = backend.forPathInfo(req.getPathInfo(), false);
+        String pathInfo = req.getPathInfo();
+        String downloadId = pathInfo.substring(1);
+        // try to get by download id
+        CacheFile file = backend.getByDownloadId(downloadId);
+        // if that fails try it as a file id
+        if(file == null) {
+            file = backend.getByFileId(downloadId, false);
+        }
+        // err if not found
         if(file == null) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND,
                     "File does not exist");
             return null;
         }
-
-        // check the state of the file
+        // err if file is gone
         int fileState = file.getState();
         if(fileState == CacheFile.STATE_EXPIRED
                 || fileState == CacheFile.STATE_ABANDONED
@@ -156,9 +163,9 @@ public class DownloadServlet extends HttpServlet {
                     "File does not exist");
             return null;
         }
-
-        // return the file
+        // return
         return file;
+
     }
 
     private CacheBackend getCacheBackend() {
