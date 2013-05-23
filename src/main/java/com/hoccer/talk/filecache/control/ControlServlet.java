@@ -37,5 +37,4 @@ public class ControlServlet extends WebSocketServlet {
         }
         return null;
     }
-
 }
