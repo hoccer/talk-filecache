@@ -87,7 +87,7 @@ public class OrmliteBackend extends CacheBackend {
     @Override
     public void checkpoint(CacheFile file) {
         try {
-            mDao.update(file);
+            mDao.createOrUpdate(file);
         } catch (SQLException e) {
             LOG.error("SQL exception", e);
         }
