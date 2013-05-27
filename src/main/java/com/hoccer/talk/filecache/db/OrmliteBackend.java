@@ -181,7 +181,9 @@ public class OrmliteBackend extends CacheBackend {
         CacheFile res = null;
 
         try {
-            res = mDao.queryForEq("uploadId", id).get(0);
+            res = mDao.queryBuilder().where()
+                      .eq("uploadId", id)
+                      .queryForFirst();
         } catch (SQLException e) {
             LOG.error("SQL exception", e);
         }
@@ -200,7 +202,9 @@ public class OrmliteBackend extends CacheBackend {
         CacheFile res = null;
 
         try {
-            res = mDao.queryForEq("downloadId", id).get(0);
+            res = mDao.queryBuilder().where()
+                    .eq("downloadId", id)
+                    .queryForFirst();
         } catch (SQLException e) {
             LOG.error("SQL exception", e);
         }
