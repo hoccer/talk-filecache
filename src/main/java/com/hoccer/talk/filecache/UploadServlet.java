@@ -156,7 +156,7 @@ public class UploadServlet extends DownloadServlet {
         if(file.getLimit() == file.getContentLength()) {
             resp.setStatus(HttpServletResponse.SC_OK);
         } else {
-            resp.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY); // "resume incomplete"
+            resp.setStatus(308); // "resume incomplete"
         }
     }
 
