@@ -160,6 +160,37 @@ public class UploadServlet extends DownloadServlet {
         }
     }
 
+    private CacheFile getFileForDownload(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        // get all the various things we need
+        CacheBackend backend = getCacheBackend();
+        String pathInfo = req.getPathInfo();
+        String uploadId = pathInfo.substring(1);
+        // try to get by download id
+        CacheFile file = backend.getByUploadId(uploadId);
+        // if that fails try it as a file id
+        if(file == null) {
+            file = backend.getByFileId(uploadId, false);
+        }
+        // err if not found
+        if(file == null) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND,
+                    "File does not exist");
+            return null;
+        }
+        // err if file is gone
+        int fileState = file.getState();
+        if(fileState == CacheFile.STATE_EXPIRED
+                || fileState == CacheFile.STATE_ABANDONED) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND,
+                    "File does not exist");
+            return null;
+        }
+        // return
+        return file;
+
+    }
+
     private CacheFile getFileForUpload(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         // get the various things we need
