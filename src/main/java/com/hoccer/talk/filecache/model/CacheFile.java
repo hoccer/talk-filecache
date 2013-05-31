@@ -91,6 +91,12 @@ public class CacheFile {
 
     @DatabaseField(columnName = "expiryTime")
 	private Date mExpiryTime;
+    @DatabaseField(columnName = "creationTime", canBeNull = true)
+    private Date mCreationTime;
+    @DatabaseField(columnName = "lastUploadTime", canBeNull = true)
+    private Date mLastUploadTime;
+    @DatabaseField(columnName = "lastDownloadTime", canBeNull = true)
+    private Date mLastDownloadTime;
 
     public CacheFile() {
         mStateLock = new ReentrantLock();
@@ -105,6 +111,8 @@ public class CacheFile {
         mFileId = UUID.randomUUID().toString();
         mUploadId = UUID.randomUUID().toString();
         mDownloadId = UUID.randomUUID().toString();
+
+        mCreationTime = new Date();
     }
 
 	public CacheFile(String fileId, String accountId, String contentType, int contentLength) {
@@ -273,6 +281,9 @@ public class CacheFile {
 
 			mUpload = upload;
 
+            mLastUploadTime = new Date();
+            mBackend.checkpoint(this);
+
 			mStateChanged.signalAll();
 		} finally {
 			mStateLock.unlock();
@@ -317,7 +328,10 @@ public class CacheFile {
 		mStateLock.lock();
 		try {
 			mDownloads.add(download);
-			
+
+            mLastDownloadTime = new Date();
+            mBackend.checkpoint(this);
+
 			mStateChanged.signalAll();
 		} finally {
 			mStateLock.unlock();
