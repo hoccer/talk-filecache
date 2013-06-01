@@ -56,7 +56,7 @@ public class UploadServlet extends DownloadServlet {
 
         CacheBackend backend = getCacheBackend();
 
-        CacheFile file = backend.forPathInfo(req.getPathInfo(), false);
+        CacheFile file = getFileForUpload(req, resp);
         if(file == null) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND,
                     "File does not exist");
