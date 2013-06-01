@@ -35,15 +35,6 @@ public abstract class CacheBackend {
         return mDataDirectory;
     }
 
-    /** Convenience wrapper for getByFileId() */
-    public CacheFile forPathInfo(String pathInfo, boolean create) {
-        if(pathInfo.length() == 1) {
-            return null;
-        }
-
-        return getByFileId(pathInfo.substring(1), create);
-    }
-
     public abstract void start();
 
     /** Get a list of all files in memory */
