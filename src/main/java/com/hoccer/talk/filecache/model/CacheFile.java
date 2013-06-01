@@ -44,9 +44,6 @@ public class CacheFile {
     public static final String TYPE_STORAGE  = "storage";
     public static final String TYPE_TRANSFER = "transfer";
 
-
-	private static ScheduledExecutorService expiryExecutor
-		= Executors.newSingleThreadScheduledExecutor();
 			
 	protected static Logger log
 		= Logger.getLogger(CacheFile.class);
@@ -245,20 +242,6 @@ public class CacheFile {
 		mExpiryTime = cal.getTime();
 		log.info("file " + mFileId + " expires " + mExpiryTime.toString());
 	}
-	
-	private void scheduleExpiry() {
-		Runnable expiryAction = new Runnable() {
-			@Override
-			public void run() {
-				CacheFile.this.expire();
-                mExpiryFuture = null;
-			}
-		};
-		mExpiryFuture = expiryExecutor.schedule(
-				            expiryAction,
-				            mExpiryTime.getTime() - System.currentTimeMillis(),
-				            TimeUnit.MILLISECONDS);
-	}
 
 	private void expire() {
 		mStateLock.lock();
@@ -311,8 +294,6 @@ public class CacheFile {
 				    switchState(STATE_COMPLETE, "upload finished");
                 }
 			}
-			
-			scheduleExpiry();
 			
 			mUpload = null;
 			
