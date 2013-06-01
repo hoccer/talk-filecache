@@ -45,15 +45,21 @@ public class OrmliteBackend extends CacheBackend {
     @Override
     public void start() {
         try {
-            LOG.info("creating connection source for " + mConfiguration.getOrmliteUrl());
+            if(LOG.isDebugEnabled()) {
+                LOG.debug("creating connection source for " + mConfiguration.getOrmliteUrl());
+            }
             mConnectionSource = new JdbcConnectionSource(mConfiguration.getOrmliteUrl(),
                                                          mConfiguration.getOrmliteUser(),
                                                          mConfiguration.getOrmlitePassword());
             if(mConfiguration.getOrmliteInitDb()) {
-                LOG.info("creating table for files");
+                if(LOG.isDebugEnabled()) {
+                    LOG.debug("creating table for files");
+                }
                 TableUtils.createTable(mConnectionSource, CacheFile.class);
             }
-            LOG.info("creating dao for files");
+            if(LOG.isDebugEnabled()) {
+                LOG.debug("creating dao for files");
+            }
             mDao = DaoManager.createDao(mConnectionSource, CacheFile.class);
         } catch (SQLException e) {
             LOG.error("Error initializing ormlite", e);
@@ -61,7 +67,9 @@ public class OrmliteBackend extends CacheBackend {
         mExpiryExecutor.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                LOG.info("deleting expired files");
+                if(LOG.isDebugEnabled()) {
+                    LOG.debug("deleting expired files");
+                }
                 deleteExpiredFiles();
             }
         }, 10, 60, TimeUnit.SECONDS);
@@ -169,8 +177,9 @@ public class OrmliteBackend extends CacheBackend {
             }
         }
 
-        // log about it
-        LOG.debug("get by fileId " + id + " found " + (res != null ? "yes" : "no"));
+        if(LOG.isDebugEnabled()) {
+            LOG.debug("get by fileId " + id + " found " + (res != null ? "yes" : "no"));
+        }
 
         // return whatever we got
         return res;
@@ -192,7 +201,9 @@ public class OrmliteBackend extends CacheBackend {
             res = activate(res);
         }
 
-        LOG.debug("get by uploadId " + id + " found " + (res != null ? "yes" : "no"));
+        if(LOG.isDebugEnabled()) {
+            LOG.debug("get by uploadId " + id + " found " + (res != null ? "yes" : "no"));
+        }
 
         return res;
     }
@@ -213,7 +224,9 @@ public class OrmliteBackend extends CacheBackend {
             res = activate(res);
         }
 
-        LOG.debug("get by downloadId " + id + " found " + (res != null ? "yes" : "no"));
+        if(LOG.isDebugEnabled()) {
+            LOG.debug("get by downloadId " + id + " found " + (res != null ? "yes" : "no"));
+        }
 
         return res;
     }
