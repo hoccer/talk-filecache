@@ -91,6 +91,7 @@ public class CacheUpload extends CacheTransfer {
 				cacheFile.updateLimit(absolutePosition, outFile);
 			}
 			
+            outFile.getFD().sync();
 			outFile.close();
 		
 		} catch (IOException e) {
