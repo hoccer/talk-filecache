@@ -26,7 +26,7 @@ public class CacheFile {
 	public static final int STATE_NEW = 1;
 	public static final int STATE_UPLOADING = 2;
 	public static final int STATE_COMPLETE = 3;
-	public static final int STATE_ABANDONED = 4;
+	/*public static final int STATE_ABANDONED = 4;*/
 	public static final int STATE_EXPIRED = 5;
     public static final int STATE_DELETED = 6;
 
@@ -147,10 +147,6 @@ public class CacheFile {
     public boolean isActive() {
         return mDownloads.size() > 0 || mUpload != null;
     }
-	
-	public boolean isAbandoned() {
-		return mState == STATE_ABANDONED;
-	}
 
 	public String getStateString() {
 		return stateNames[mState];
@@ -386,9 +382,6 @@ public class CacheFile {
             if(mState == STATE_DELETED) {
                 return false;
             }
-			if(mState == STATE_ABANDONED) {
-				return false;
-			}
             if(mState == STATE_EXPIRED) {
                 return false;
             }

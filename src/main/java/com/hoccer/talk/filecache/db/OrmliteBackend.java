@@ -127,7 +127,6 @@ public class OrmliteBackend extends CacheBackend {
 
             int fileState = file.getState();
             switch(fileState) {
-            case CacheFile.STATE_ABANDONED:
             case CacheFile.STATE_EXPIRED:
             case CacheFile.STATE_DELETED:
                 delete(file);
@@ -240,7 +239,6 @@ public class OrmliteBackend extends CacheBackend {
                             .where().le("expiryTime", new Date())
                             .prepare();
             files = mDao.query(expiryQuery);
-            files.addAll(mDao.queryForEq("state", CacheFile.STATE_ABANDONED));
             files.addAll(mDao.queryForEq("state", CacheFile.STATE_DELETED));
             files.addAll(mDao.queryForEq("state", CacheFile.STATE_EXPIRED));
         } catch (SQLException e) {
@@ -254,9 +252,6 @@ public class OrmliteBackend extends CacheBackend {
                     file.expire();
                     break;
                 case CacheFile.STATE_DELETED:
-                    file.delete();
-                    break;
-                case CacheFile.STATE_ABANDONED:
                     file.delete();
                     break;
                 }
