@@ -200,7 +200,7 @@ public class UploadServlet extends DownloadServlet {
         CacheFile file = backend.getByUploadId(uploadId);
         // if not found try it as a file id
         if(file == null) {
-            file = backend.getByFileId(uploadId, true);
+            file = backend.getByFileId(uploadId, false);
         }
         // err if not found
         if(file == null) {
