@@ -249,7 +249,17 @@ public class OrmliteBackend extends CacheBackend {
         if(files != null) {
             for(int i = 0; i < files.size(); i++) {
                 CacheFile file = activate(files.get(i));
-                file.delete();
+                switch(file.getState()) {
+                case CacheFile.STATE_EXPIRED:
+                    file.expire();
+                    break;
+                case CacheFile.STATE_DELETED:
+                    file.delete();
+                    break;
+                case CacheFile.STATE_ABANDONED:
+                    file.delete();
+                    break;
+                }
             }
         }
     }

@@ -243,11 +243,12 @@ public class CacheFile {
 		log.info("file " + mFileId + " expires " + mExpiryTime.toString());
 	}
 
-	private void expire() {
+	public void expire() {
 		mStateLock.lock();
 		try {
 			switchState(STATE_EXPIRED, "expiry time reached");
-			considerDeactivate();
+
+            mBackend.deactivate(this);
 		} finally {
 			mStateLock.unlock();
 		}
