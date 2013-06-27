@@ -15,12 +15,12 @@ public class CacheConfiguration {
     private String mDataDirectory = null;
     private long   mDataCheckpointInterval = 2000;
 
-    private String mDatabaseBackend;
+    private String mDatabaseBackend = "memory";
 
-    private boolean mOrmliteInitDb;
-    private String mOrmliteUrl;
-    private String mOrmliteUser;
-    private String mOrmlitePassword;
+    private boolean mOrmliteInitDb   = false;
+    private String  mOrmliteUrl      = "talk";
+    private String  mOrmliteUser     = "talk";
+    private String  mOrmlitePassword = "talk";
 
     public int getServerThreads() {
         return mServerThreads;
@@ -100,19 +100,28 @@ public class CacheConfiguration {
 
     public void configureFromProperties(Properties properties) {
         // Server
-        mServerThreads = Integer.parseInt(properties.getProperty(PROPERTY_PREFIX + ".server.threads", "128"));
+        String serverThreads = properties.getProperty(PROPERTY_PREFIX + ".server.threads");
+        if(serverThreads != null) {
+            mServerThreads = Integer.parseInt(serverThreads);
+        }
         // Listen params
-        mListenAddress = properties.getProperty(PROPERTY_PREFIX + ".listen.address", "localhost");
-        mListenPort = Integer.parseInt(properties.getProperty(PROPERTY_PREFIX + ".listen.port", "8080"));
+        mListenAddress = properties.getProperty(PROPERTY_PREFIX + ".listen.address", mListenAddress);
+        String listenPort = properties.getProperty(PROPERTY_PREFIX + ".listen.port");
+        if(listenPort != null) {
+            mListenPort = Integer.parseInt(listenPort);
+        }
         // Data directory
-        mDataDirectory = properties.getProperty(PROPERTY_PREFIX + ".data.directory", "/srv/filecache");
-        mDataCheckpointInterval = Long.parseLong(properties.getProperty(PROPERTY_PREFIX + ".data.checkpointInterval", "2000"));
+        mDataDirectory = properties.getProperty(PROPERTY_PREFIX + ".data.directory", mDataDirectory);
+        String dataCheckpointInterval = properties.getProperty(PROPERTY_PREFIX + ".data.checkpointInterval");
+        if(dataCheckpointInterval != null) {
+            mDataCheckpointInterval = Long.parseLong(dataCheckpointInterval);
+        }
         // Database
-        mDatabaseBackend = properties.getProperty(PROPERTY_PREFIX + ".database.backend", "memory");
+        mDatabaseBackend = properties.getProperty(PROPERTY_PREFIX + ".database.backend", mDatabaseBackend);
         // ORMlite
-        mOrmliteUrl = properties.getProperty(PROPERTY_PREFIX + ".ormlite.url", "talk");
-        mOrmliteUser = properties.getProperty(PROPERTY_PREFIX + ".ormlite.user", "talk");
-        mOrmlitePassword = properties.getProperty(PROPERTY_PREFIX + ".ormlite.password", "talk");
+        mOrmliteUrl = properties.getProperty(PROPERTY_PREFIX + ".ormlite.url", mOrmliteUrl);
+        mOrmliteUser = properties.getProperty(PROPERTY_PREFIX + ".ormlite.user", mOrmliteUser);
+        mOrmlitePassword = properties.getProperty(PROPERTY_PREFIX + ".ormlite.password", mOrmlitePassword);
     }
 
 }
