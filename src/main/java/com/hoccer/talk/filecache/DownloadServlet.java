@@ -135,7 +135,7 @@ public class DownloadServlet extends HttpServlet {
                         "/" + file.getContentLength());
     }
 
-    private CacheFile getFileForDownload(HttpServletRequest req, HttpServletResponse resp)
+    protected CacheFile getFileForDownload(HttpServletRequest req, HttpServletResponse resp)
         throws ServletException, IOException {
         // get all the various things we need
         CacheBackend backend = getCacheBackend();
@@ -166,7 +166,7 @@ public class DownloadServlet extends HttpServlet {
 
     }
 
-    private CacheBackend getCacheBackend() {
+    protected CacheBackend getCacheBackend() {
         ServletContext ctx = getServletContext();
         CacheBackend backend = (CacheBackend)ctx.getAttribute("backend");
         return backend;

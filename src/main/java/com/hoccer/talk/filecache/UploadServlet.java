@@ -159,7 +159,8 @@ public class UploadServlet extends DownloadServlet {
         }
     }
 
-    private CacheFile getFileForDownload(HttpServletRequest req, HttpServletResponse resp)
+    @Override
+    protected CacheFile getFileForDownload(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         // get all the various things we need
         CacheBackend backend = getCacheBackend();
@@ -190,7 +191,7 @@ public class UploadServlet extends DownloadServlet {
 
     }
 
-    private CacheFile getFileForUpload(HttpServletRequest req, HttpServletResponse resp)
+    protected CacheFile getFileForUpload(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         // get the various things we need
         CacheBackend backend = getCacheBackend();
@@ -218,12 +219,6 @@ public class UploadServlet extends DownloadServlet {
         }
         // return
         return file;
-    }
-
-    private CacheBackend getCacheBackend() {
-        ServletContext ctx = getServletContext();
-        CacheBackend backend = (CacheBackend)ctx.getAttribute("backend");
-        return backend;
     }
 
 }
