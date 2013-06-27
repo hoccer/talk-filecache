@@ -22,14 +22,13 @@ public class UploadServlet extends DownloadServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        log.info("upload starts: " + req.getPathInfo());
-
         CacheFile file = getFileForUpload(req, resp);
         if(file == null) {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND,
-                    "File can not exist in cache");
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND, "File does not exist");
             return;
         }
+
+        log.info("PUT " + req.getPathInfo() + " found " + file.getFileId());
 
         ByteRange range = beginPut(file, req, resp);
         if(range == null) {
@@ -46,8 +45,6 @@ public class UploadServlet extends DownloadServlet {
             log.info("upload interrupted: " + req.getPathInfo());
             return;
         }
-
-        log.info("upload finished: " + req.getPathInfo());
     }
 
     @Override
@@ -62,6 +59,8 @@ public class UploadServlet extends DownloadServlet {
                     "File does not exist");
             return;
         }
+
+        log.info("DELETE " + req.getPathInfo() + " found " + file.getFileId());
 
         file.delete();
     }

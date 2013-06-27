@@ -21,7 +21,6 @@ public class DownloadServlet extends HttpServlet {
 
     @Override
     protected void doHead(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        log.info("status request: " + req.getPathInfo());
 
         // get the relevant file
         CacheFile file = getFileForDownload(req, resp);
@@ -29,6 +28,8 @@ public class DownloadServlet extends HttpServlet {
         if(file == null) {
             return;
         }
+
+        log.info("HEAD " + req.getPathInfo() + " found " + file.getFileId());
 
         // prepare the response
         ByteRange range = beginGet(file, req, resp);
@@ -41,14 +42,14 @@ public class DownloadServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        log.info("download starts: " + req.getPathInfo());
-
         // get the relevant file
         CacheFile file = getFileForDownload(req, resp);
         // abort if we don't have one
         if(file == null) {
             return;
         }
+
+        log.info("GET " + req.getPathInfo() + " found " + file.getFileId());
 
         // set response headers
         ByteRange range = beginGet(file, req, resp);
@@ -70,8 +71,6 @@ public class DownloadServlet extends HttpServlet {
             log.info("download interrupted: " + req.getPathInfo());
             return;
         }
-
-        log.info("download finished: " + req.getPathInfo());
     }
 
     private ByteRange beginGet(CacheFile file, HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
