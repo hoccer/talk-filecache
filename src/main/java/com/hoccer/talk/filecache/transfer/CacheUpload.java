@@ -59,39 +59,53 @@ public class CacheUpload extends CacheTransfer {
 		cacheFile.uploadStarts(this);
 		
 		try {
+            // get the input stream
 			InputStream inStream = httpRequest.getInputStream();
+            // open the file
 			RandomAccessFile outFile = cacheFile.openForRandomAccess("rw");
 
 			// determine amount of data to send
             int totalRequested = ((int)byteRange.getEnd()) - ((int)byteRange.getStart()) + 1;
 
+            // adjust file size to content length
             outFile.setLength(cacheFile.getContentLength());
+
+            // seek to upload start position
 			outFile.seek(byteRange.getStart());
-			
+
+            // perform the upload
 			int totalTransferred = 0;
             int absolutePosition = (int)byteRange.getStart();
 			while(totalTransferred < totalRequested) {
+                // allow interruption
                 if(Thread.interrupted()) {
                     throw new InterruptedException();
                 }
 
+                // read a chunk from input stream
 				int bytesRead = inStream.read(buffer);
-				
 				if(bytesRead == -1) {
 					break;
 				}
-				
+
+                // write chunk out to file
 				outFile.write(buffer, 0, bytesRead);
-				
+
+                // adjust position variables
 				totalTransferred += bytesRead;
                 absolutePosition += bytesRead;
-				
+
+                // inform rate estimator
 				transferProgress(bytesRead);
-				
+
+                // update the files limit
 				cacheFile.updateLimit(absolutePosition, outFile);
 			}
-			
+
+            // do a final sync
             outFile.getFD().sync();
+
+            // we are done, close the file
 			outFile.close();
 		
 		} catch (IOException e) {
