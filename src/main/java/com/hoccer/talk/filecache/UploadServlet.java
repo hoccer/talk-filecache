@@ -181,7 +181,7 @@ public class UploadServlet extends DownloadServlet {
         // err if file is gone
         int fileState = file.getState();
         if(fileState == CacheFile.STATE_EXPIRED
-                || fileState == CacheFile.STATE_ABANDONED) {
+                || fileState == CacheFile.STATE_DELETED) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND,
                     "File does not exist");
             return null;
@@ -212,7 +212,7 @@ public class UploadServlet extends DownloadServlet {
         // err if file is gone
         int fileState = file.getState();
         if(fileState == CacheFile.STATE_EXPIRED
-                || fileState == CacheFile.STATE_ABANDONED) {
+                || fileState == CacheFile.STATE_DELETED) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND,
                     "File does not exist");
             return null;
