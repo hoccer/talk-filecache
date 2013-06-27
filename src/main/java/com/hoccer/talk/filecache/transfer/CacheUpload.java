@@ -95,17 +95,21 @@ public class CacheUpload extends CacheTransfer {
 		
 		} catch (IOException e) {
 			cacheFile.uploadAborted(this);
+            // rethrow to finish http request
 			throw e;
 		} catch (InterruptedException e) {
             cacheFile.uploadAborted(this);
+            // rethrow to finish http request
             throw e;
         } finally {
+            // always finish the rate estimator
             transferEnd();
             // return the transfer buffer
             BufferCache.returnBuffer(buffer);
         }
 
-		cacheFile.uploadFinished(this);
+        // we are done, tell everybody
+        cacheFile.uploadFinished(this);
 	}
 
 }

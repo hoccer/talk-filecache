@@ -96,6 +96,7 @@ public class CacheDownload extends CacheTransfer {
 			
 		} catch (InterruptedException e) {
             cacheFile.downloadAborted(this);
+            // rethrow to finish the http request
             throw e;
         } catch (IOException e) {
             // notify the file of the abort
