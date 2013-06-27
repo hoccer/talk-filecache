@@ -232,15 +232,19 @@ public class OrmliteBackend extends CacheBackend {
 
 
     private void deleteExpiredFiles() {
+        LOG.info("querying for expired files");
         List<CacheFile> files = null;
         try {
             PreparedQuery<CacheFile> expiryQuery =
                     mDao.queryBuilder()
-                            .where().le("expiryTime", new Date())
+                            .where()
+                                .le("expiryTime", new Date())
+                                .eq("state", CacheFile.STATE_EXPIRED)
+                                .eq("state", CacheFile.STATE_DELETED)
+                            .or(3)
                             .prepare();
             files = mDao.query(expiryQuery);
-            files.addAll(mDao.queryForEq("state", CacheFile.STATE_DELETED));
-            files.addAll(mDao.queryForEq("state", CacheFile.STATE_EXPIRED));
+            LOG.info("found " + files.size() + " files");
         } catch (SQLException e) {
             LOG.error("SQL exception", e);
         }
