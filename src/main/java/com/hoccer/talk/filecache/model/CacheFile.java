@@ -176,6 +176,8 @@ public class CacheFile {
         return mFileType;
     }
 
+
+
     public void setFileType(String fileType) {
         this.mFileType = fileType;
     }
@@ -199,8 +201,20 @@ public class CacheFile {
 	public Date getExpiryTime() {
 		return mExpiryTime;
 	}
-	
-	public CacheUpload getUpload() {
+
+    public Date getCreationTime() {
+        return mCreationTime;
+    }
+
+    public Date getLastUploadTime() {
+        return mLastUploadTime;
+    }
+
+    public Date getLastDownloadTime() {
+        return mLastDownloadTime;
+    }
+
+    public CacheUpload getUpload() {
 		return mUpload;
 	}
 	
