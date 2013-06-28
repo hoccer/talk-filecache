@@ -224,8 +224,8 @@ public class CacheFile {
 	}
 	
 	private void considerDeactivate() {
+        mBackend.checkpoint(this);
         if(!isActive()) {
-            mBackend.checkpoint(this);
             mBackend.deactivate(this);
         }
 	}
@@ -286,12 +286,6 @@ public class CacheFile {
 	public void uploadFinished(CacheUpload upload) {
 		mStateLock.lock();
 		try {
-			if(mState == STATE_UPLOADING) {
-                if(mLimit >= mContentLength) {
-				    switchState(STATE_COMPLETE, "upload finished");
-                }
-			}
-			
 			mUpload = null;
 			
 			mStateChanged.signalAll();
@@ -317,13 +311,29 @@ public class CacheFile {
 	}
 	
 	public void downloadAborted(CacheDownload download) {
-		mDownloads.remove(download);
-		considerDeactivate();
+        mStateLock.lock();
+        try {
+            mDownloads.remove(download);
+
+            mStateChanged.signalAll();
+
+            considerDeactivate();
+        } finally {
+            mStateLock.unlock();
+        }
 	}
 	
 	public void downloadFinished(CacheDownload download) {
-		mDownloads.remove(download);
-		considerDeactivate();
+        mStateLock.lock();
+        try {
+            mDownloads.remove(download);
+
+            mStateChanged.signalAll();
+
+            considerDeactivate();
+        } finally {
+            mStateLock.unlock();
+        }
 	}
 	
 	public void updateLimit(int newLimit, RandomAccessFile raf) throws IOException {
@@ -334,9 +344,16 @@ public class CacheFile {
                 log.debug("limit is now " + newLimit + " was " + mLimit);
                 mLimit = newLimit;
             }
+
+            if(newLimit == mContentLength) {
+                if(mState == STATE_UPLOADING) {
+                    switchState(STATE_COMPLETE, "limit has reached content length");
+                }
+            }
 			
 			mStateChanged.signalAll();
 
+            // do occasional checkpoints
             long now = System.currentTimeMillis();
             if((now - mLastCheckpoint) >= mCheckpointInterval) {
                 log.debug("checkpointing " + mFileId + " at " + mLimit);
