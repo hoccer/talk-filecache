@@ -5,6 +5,7 @@ import com.hoccer.talk.filecache.CacheConfiguration;
 import com.hoccer.talk.filecache.model.CacheFile;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 public class MemoryBackend extends CacheBackend {
@@ -37,6 +38,11 @@ public class MemoryBackend extends CacheBackend {
 
     @Override
     public CacheFile getByDownloadId(String id) {
+        return null;
+    }
+
+    @Override
+    public List<CacheFile> getFilesByAccount(String accountId) {
         return null;
     }
 

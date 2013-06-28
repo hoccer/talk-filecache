@@ -52,6 +52,8 @@ public abstract class CacheBackend {
     public abstract CacheFile getByUploadId(String id);
     public abstract CacheFile getByDownloadId(String id);
 
+    public abstract List<CacheFile> getFilesByAccount(String accountId);
+
     /**
      * Checkpoint the given files state in the database
      *

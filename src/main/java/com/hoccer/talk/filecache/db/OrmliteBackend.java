@@ -230,6 +230,26 @@ public class OrmliteBackend extends CacheBackend {
         return res;
     }
 
+    @Override
+    public List<CacheFile> getFilesByAccount(String accountId) {
+        List<CacheFile> res = null;
+
+        try {
+            res = mDao.queryBuilder().where()
+                            .eq("accountId", accountId)
+                       .query();
+        } catch (SQLException e) {
+            LOG.error("SQL exception", e);
+        }
+
+        if(res != null) {
+            for(int i = 0; i < res.size(); i++) {
+                res.set(i, activate(res.get(i)));
+            }
+        }
+
+        return res;
+    }
 
     private void deleteExpiredFiles() {
         LOG.info("querying for expired files");

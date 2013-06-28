@@ -6,6 +6,7 @@ import com.hoccer.talk.filecache.model.CacheFile;
 import com.hoccer.talk.filecache.rpc.ICacheControl;
 
 import javax.servlet.ServletContext;
+import java.util.List;
 import java.util.UUID;
 
 public class ControlConnection implements ICacheControl {
@@ -67,11 +68,19 @@ public class ControlConnection implements ICacheControl {
     @Override
     public void deleteFile(String fileId) {
         CacheFile file = mBackend.getByFileId(fileId, false);
-        file.delete();
+        if(file != null) {
+            file.delete();
+        }
     }
 
     @Override
     public void deleteAccount(String accountId) {
+        List<CacheFile> files = mBackend.getFilesByAccount(accountId);
+        if(files != null) {
+            for(CacheFile file: files) {
+                file.delete();
+            }
+        }
     }
 
 }
