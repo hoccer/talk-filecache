@@ -25,24 +25,28 @@ public class UploadServlet extends DownloadServlet {
         CacheFile file = getFileForUpload(req, resp);
         if(file == null) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND, "File does not exist");
+            log.info("PUT " + req.getPathInfo() + " " + resp.getStatus() + " file not found");
             return;
         }
-
-        log.info("PUT " + req.getPathInfo() + " found " + file.getFileId());
 
         ByteRange range = beginPut(file, req, resp);
         if(range == null) {
+            log.info("PUT " + req.getPathInfo() + " " + resp.getStatus() + " invalid range");
             return;
         }
+
+        log.info("PUT " + req.getPathInfo() + " " + resp.getStatus() + " found " + file.getFileId() + " range " + range);
 
         CacheUpload upload = new CacheUpload(file, req, resp, range);
 
         finishPut(file, req, resp);
 
         try {
+            log.info("PUT " + req.getPathInfo() + " --- upload started");
             upload.perform();
+            log.info("PUT " + req.getPathInfo() + " --- upload finished");
         } catch (InterruptedException e) {
-            log.info("upload interrupted: " + req.getPathInfo());
+            log.info("PUT " + req.getPathInfo() + " --- upload interrupted");
             return;
         }
     }
@@ -174,16 +178,11 @@ public class UploadServlet extends DownloadServlet {
         }
         // err if not found
         if(file == null) {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND,
-                    "File does not exist");
             return null;
         }
         // err if file is gone
         int fileState = file.getState();
-        if(fileState == CacheFile.STATE_EXPIRED
-                || fileState == CacheFile.STATE_DELETED) {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND,
-                    "File does not exist");
+        if(fileState == CacheFile.STATE_EXPIRED || fileState == CacheFile.STATE_DELETED) {
             return null;
         }
         // return
@@ -205,16 +204,11 @@ public class UploadServlet extends DownloadServlet {
         }
         // err if not found
         if(file == null) {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND,
-                    "File does not exist");
             return null;
         }
         // err if file is gone
         int fileState = file.getState();
-        if(fileState == CacheFile.STATE_EXPIRED
-                || fileState == CacheFile.STATE_DELETED) {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND,
-                    "File does not exist");
+        if(fileState == CacheFile.STATE_EXPIRED || fileState == CacheFile.STATE_DELETED) {
             return null;
         }
         // return

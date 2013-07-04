@@ -26,17 +26,20 @@ public class DownloadServlet extends HttpServlet {
         CacheFile file = getFileForDownload(req, resp);
         // abort if we don't have one
         if(file == null) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND, "File does not exist");
+            log.info("HEAD " + req.getPathInfo() + " " + resp.getStatus() + " file not found");
             return;
         }
-
-        log.info("HEAD " + req.getPathInfo() + " found " + file.getFileId());
 
         // prepare the response
         ByteRange range = beginGet(file, req, resp);
         if(range == null) {
+            log.info("HEAD " + req.getPathInfo() + " " + resp.getStatus() + " invalid range");
             return;
         }
         finishGet(file, req, resp, range);
+
+        log.info("HEAD " + req.getPathInfo() + " " + resp.getStatus() + " found " + file.getFileId() + " range " + range.toString());
     }
 
     @Override
@@ -46,15 +49,16 @@ public class DownloadServlet extends HttpServlet {
         CacheFile file = getFileForDownload(req, resp);
         // abort if we don't have one
         if(file == null) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND, "File does not exist");
+            log.info("GET " + req.getPathInfo() + " " + resp.getStatus() + " file not found");
             return;
         }
-
-        log.info("GET " + req.getPathInfo() + " found " + file.getFileId());
 
         // set response headers
         ByteRange range = beginGet(file, req, resp);
         // abort if there was an error
         if(range == null) {
+            log.info("GET " + req.getPathInfo() + " " + resp.getStatus() + " invalid range");
             return;
         }
 
@@ -64,11 +68,15 @@ public class DownloadServlet extends HttpServlet {
         // finish response headers
         finishGet(file, req, resp, range);
 
+        log.info("GET " + req.getPathInfo() + " " + resp.getStatus() + " found " + file.getFileId() + " range " + range.toString());
+
         // perform the download itself
         try {
+            log.info("GET " + req.getPathInfo() + " --- download started");
             download.perform();
+            log.info("GET " + req.getPathInfo() + " --- download finished");
         } catch (InterruptedException e) {
-            log.info("download interrupted: " + req.getPathInfo());
+            log.info("GET " + req.getPathInfo() + " --- download interrupted");
             return;
         }
     }
@@ -149,16 +157,11 @@ public class DownloadServlet extends HttpServlet {
         }
         // err if not found
         if(file == null) {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND,
-                    "File does not exist");
             return null;
         }
         // err if file is gone
         int fileState = file.getState();
-        if(fileState == CacheFile.STATE_EXPIRED
-                || fileState == CacheFile.STATE_DELETED) {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND,
-                    "File does not exist");
+        if(fileState == CacheFile.STATE_EXPIRED || fileState == CacheFile.STATE_DELETED) {
             return null;
         }
         // return
