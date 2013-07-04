@@ -33,27 +33,6 @@ public class CacheUpload extends CacheTransfer {
 	public void perform() throws IOException, InterruptedException {
         // allocate a transfer buffer
 		byte[] buffer = BufferCache.takeBuffer();
-		
-		// determine expiry time
-		int expiresIn = MAX_LIFETIME;
-		String expiresString = httpRequest.getParameter("expires_in");
-		if(expiresString != null) {
-			expiresIn = Integer.parseInt(expiresString);
-		}
-		if(expiresIn < MIN_LIFETIME) {
-			expiresIn = MIN_LIFETIME;
-		}
-		if(expiresIn > MAX_LIFETIME) {
-			expiresIn = MAX_LIFETIME;
-		}
-		cacheFile.setupExpiry(expiresIn);
-		
-		// determine content type
-		String cType = httpRequest.getContentType();
-		if(cType == null) {
-			cType = "application/octet-stream";
-		}
-		cacheFile.setContentType(cType);
 
         // start the rate estimator
         transferBegin(Thread.currentThread());

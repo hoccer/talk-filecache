@@ -57,6 +57,7 @@ public class ControlConnection implements ICacheControl {
         file.setFileType(CacheFile.TYPE_STORAGE);
         file.setContentType(contentType);
         file.setContentLength(contentLength);
+        file.setupExpiry(100 * 365 * 24 * 3600); // XXX 100 years
 
         mBackend.checkpoint(file);
 
@@ -77,6 +78,7 @@ public class ControlConnection implements ICacheControl {
         file.setFileType(CacheFile.TYPE_TRANSFER);
         file.setContentType(contentType);
         file.setContentLength(contentLength);
+        file.setupExpiry(3 * 7 * 24 * 3600); // XXX 3 weeks
 
         mBackend.checkpoint(file);
 
