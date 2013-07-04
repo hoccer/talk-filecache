@@ -100,19 +100,19 @@ public class CacheConfiguration {
 
     public void configureFromProperties(Properties properties) {
         // Server
-        String serverThreads = properties.getProperty(PROPERTY_PREFIX + ".server.threads");
+        String serverThreads = properties.getProperty(PROPERTY_PREFIX + ".server.threads", Integer.toString(mServerThreads));
         if(serverThreads != null) {
             mServerThreads = Integer.parseInt(serverThreads);
         }
         // Listen params
         mListenAddress = properties.getProperty(PROPERTY_PREFIX + ".listen.address", mListenAddress);
-        String listenPort = properties.getProperty(PROPERTY_PREFIX + ".listen.port");
+        String listenPort = properties.getProperty(PROPERTY_PREFIX + ".listen.port", Integer.toString(mListenPort));
         if(listenPort != null) {
             mListenPort = Integer.parseInt(listenPort);
         }
         // Data directory
         mDataDirectory = properties.getProperty(PROPERTY_PREFIX + ".data.directory", mDataDirectory);
-        String dataCheckpointInterval = properties.getProperty(PROPERTY_PREFIX + ".data.checkpointInterval");
+        String dataCheckpointInterval = properties.getProperty(PROPERTY_PREFIX + ".data.checkpointInterval", Long.toString(mDataCheckpointInterval));
         if(dataCheckpointInterval != null) {
             mDataCheckpointInterval = Long.parseLong(dataCheckpointInterval);
         }
