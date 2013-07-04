@@ -23,6 +23,7 @@ public class CacheMain {
     private static final Logger LOG = Logger.getLogger(CacheMain.class);
 
     @Parameter(names={"-c", "-config"},
+               required = true,
                description = "Configuration file to use")
     String config = null;
 
@@ -134,10 +135,15 @@ public class CacheMain {
     }
 
     public static void main(String[] args) {
+        // standard log4j initialization
         BasicConfigurator.configure();
+        // create main instance
         CacheMain main = new CacheMain();
+        // parse command line
         JCommander commander = new JCommander(main, args);
+        // configure log4j from the config file
         PropertyConfigurator.configure(main.config);
+        // run the thing
         main.run();
     }
 
