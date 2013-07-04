@@ -54,8 +54,14 @@ public class CacheDownload extends CacheTransfer {
             int absolutePosition = (int)byteRange.getStart();
             int absoluteEnd = absolutePosition + totalRequested;
             while(totalTransferred < totalRequested) {
+                // abort on thread interrupt
                 if(Thread.interrupted()) {
-                    throw new InterruptedException();
+                    throw new InterruptedException("Transfer thread interrupted");
+                }
+
+                // abort when file becomes invalid
+                if(!cacheFile.isAlive()) {
+                    throw new InterruptedException("File no longer available");
                 }
 
                 // determine how much to transfer

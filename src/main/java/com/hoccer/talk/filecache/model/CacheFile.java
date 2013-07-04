@@ -148,6 +148,10 @@ public class CacheFile {
         return mDownloads.size() > 0 || mUpload != null;
     }
 
+    public boolean isAlive() {
+        return mState == STATE_NEW || mState == STATE_UPLOADING || mState == STATE_COMPLETE;
+    }
+
 	public String getStateString() {
 		return stateNames[mState];
 	}

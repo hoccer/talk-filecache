@@ -55,7 +55,9 @@ public class CacheUpload extends CacheTransfer {
 		}
 		cacheFile.setContentType(cType);
 
+        // start the rate estimator
         transferBegin(Thread.currentThread());
+        // start the transfer
 		cacheFile.uploadStarts(this);
 		
 		try {
@@ -77,9 +79,14 @@ public class CacheUpload extends CacheTransfer {
 			int totalTransferred = 0;
             int absolutePosition = (int)byteRange.getStart();
 			while(totalTransferred < totalRequested) {
-                // allow interruption
+                // allow thread interruption
                 if(Thread.interrupted()) {
-                    throw new InterruptedException();
+                    throw new InterruptedException("Transfer thread interrupted");
+                }
+
+                // abort when the file reaches an invalid state
+                if(!cacheFile.isAlive()) {
+                    throw new InterruptedException("File no longer available");
                 }
 
                 // read a chunk from input stream
