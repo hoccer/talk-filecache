@@ -58,7 +58,7 @@ public class ControlConnection implements ICacheControl {
         file.setAccountId(accountId);
         file.setContentType(contentType);
         file.setContentLength(contentLength);
-        file.setupExpiry(100 * 365 * 24 * 3600); // XXX 100 years
+        file.setupExpiry(365 * 24 * 3600); // XXX 1 year
 
         mBackend.checkpoint(file);
 
