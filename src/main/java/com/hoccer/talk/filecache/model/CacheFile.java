@@ -176,6 +176,10 @@ public class CacheFile {
         return mAccountId;
     }
 
+    public void setAccountId(String accountId) {
+        this.mAccountId = accountId;
+    }
+
     public String getFileType() {
         return mFileType;
     }

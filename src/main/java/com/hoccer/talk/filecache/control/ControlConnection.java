@@ -55,6 +55,7 @@ public class ControlConnection implements ICacheControl {
         CacheFile file = mBackend.getByFileId(UUID.randomUUID().toString(), true);
 
         file.setFileType(CacheFile.TYPE_STORAGE);
+        file.setAccountId(accountId);
         file.setContentType(contentType);
         file.setContentLength(contentLength);
         file.setupExpiry(100 * 365 * 24 * 3600); // XXX 100 years
@@ -76,6 +77,7 @@ public class ControlConnection implements ICacheControl {
         CacheFile file = mBackend.getByFileId(UUID.randomUUID().toString(), true);
 
         file.setFileType(CacheFile.TYPE_TRANSFER);
+        file.setAccountId(accountId);
         file.setContentType(contentType);
         file.setContentLength(contentLength);
         file.setupExpiry(3 * 7 * 24 * 3600); // XXX 3 weeks
