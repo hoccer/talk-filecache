@@ -35,20 +35,22 @@ public class UploadServlet extends DownloadServlet {
             return;
         }
 
-        log.info("PUT " + req.getPathInfo() + " " + resp.getStatus() + " found " + file.getFileId() + " range " + range);
+        log.info("PUT " + req.getPathInfo() + " " + resp.getStatus() + " found " + file.getFileId() + " range " + range.toContentRangeString());
 
-        CacheUpload upload = new CacheUpload(file, req, resp, range);
+        if(range.hasStart()) {
+            CacheUpload upload = new CacheUpload(file, req, resp, range);
+
+            try {
+                log.info("PUT " + req.getPathInfo() + " --- upload started");
+                upload.perform();
+                log.info("PUT " + req.getPathInfo() + " --- upload finished");
+            } catch (InterruptedException e) {
+                log.info("PUT " + req.getPathInfo() + " --- upload interrupted");
+                return;
+            }
+        }
 
         finishPut(file, req, resp);
-
-        try {
-            log.info("PUT " + req.getPathInfo() + " --- upload started");
-            upload.perform();
-            log.info("PUT " + req.getPathInfo() + " --- upload finished");
-        } catch (InterruptedException e) {
-            log.info("PUT " + req.getPathInfo() + " --- upload interrupted");
-            return;
-        }
     }
 
     @Override
@@ -87,8 +89,6 @@ public class UploadServlet extends DownloadServlet {
         if(file.getContentLength() == -1) {
             if(headContentRange == null) {
                 file.setContentLength(contentLength);
-            } else {
-                // XXX we should take the length from the third field of headContentRange
             }
         } else {
             if(contentLength > file.getContentLength()) {
@@ -121,30 +121,32 @@ public class UploadServlet extends DownloadServlet {
             }
         }
 
-        // fill in the end if the client didn't specify
-        if(!range.hasEnd()) {
-            range = new ByteRange(range.getStart(), file.getContentLength() - 1);
-        }
+        if(range.hasStart()) {
+            // fill in the end if the client didn't specify
+            if(!range.hasEnd()) {
+                range = new ByteRange(range.getStart(), file.getContentLength() - 1);
+            }
 
-        // verify that it makes sense
-        if(range.getStart() > range.getEnd()) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad range: start > end");
-            return null;
-        }
-        if(range.getStart() < 0 || range.getEnd() < 0) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad range: start or end < 0");
-            return null;
-        }
-        if(range.getStart() > file.getContentLength() || range.getEnd() > file.getContentLength()) {
-            resp.setStatus(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
-            return null;
-        }
+            // verify that it makes sense
+            if(range.getStart() > range.getEnd()) {
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad range: start > end");
+                return null;
+            }
+            if(range.getStart() < 0 || range.getEnd() < 0) {
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad range: start or end < 0");
+                return null;
+            }
+            if(range.getStart() > file.getContentLength() || range.getEnd() > file.getContentLength()) {
+                resp.setStatus(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
+                return null;
+            }
 
-        // determine the length of the chunk
-        long length = range.getEnd() - range.getStart() + 1;
-        if(length != contentLength) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Content length does not match range");
-            return null;
+            // determine the length of the chunk
+            long length = range.getEnd() - range.getStart() + 1;
+            if(length != contentLength) {
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Content length does not match range");
+                return null;
+            }
         }
 
         return range;
