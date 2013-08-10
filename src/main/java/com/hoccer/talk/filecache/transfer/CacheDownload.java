@@ -1,14 +1,13 @@
 package com.hoccer.talk.filecache.transfer;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
+import com.google.appengine.api.blobstore.ByteRange;
+import com.hoccer.talk.filecache.model.CacheFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.google.appengine.api.blobstore.ByteRange;
-import com.hoccer.talk.filecache.model.CacheFile;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.RandomAccessFile;
 
 /**
  * Active download from the cache

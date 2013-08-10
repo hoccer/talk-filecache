@@ -1,17 +1,5 @@
 package com.hoccer.talk.filecache.model;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
-
 import com.hoccer.talk.filecache.CacheBackend;
 import com.hoccer.talk.filecache.CacheConfiguration;
 import com.hoccer.talk.filecache.transfer.CacheDownload;
@@ -19,6 +7,19 @@ import com.hoccer.talk.filecache.transfer.CacheUpload;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import org.apache.log4j.Logger;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.UUID;
+import java.util.Vector;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 @DatabaseTable(tableName = "file")
 public class CacheFile {

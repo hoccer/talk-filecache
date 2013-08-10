@@ -1,6 +1,5 @@
 package com.hoccer.talk.filecache;
 
-import java.io.File;
 import java.util.Properties;
 
 public class CacheConfiguration {

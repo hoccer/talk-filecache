@@ -9,11 +9,13 @@ import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.misc.TransactionManager;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.table.TableUtils;
-import org.apache.log4j.helpers.LogLog;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Date;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Vector;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

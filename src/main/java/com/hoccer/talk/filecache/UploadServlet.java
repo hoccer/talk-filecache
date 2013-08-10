@@ -6,10 +6,8 @@ import com.hoccer.talk.filecache.model.CacheFile;
 import com.hoccer.talk.filecache.transfer.CacheUpload;
 import org.apache.log4j.Logger;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;

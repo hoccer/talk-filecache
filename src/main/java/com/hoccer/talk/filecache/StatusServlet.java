@@ -1,12 +1,8 @@
 package com.hoccer.talk.filecache;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Vector;
+import com.hoccer.talk.filecache.model.CacheFile;
+import com.hoccer.talk.filecache.transfer.CacheDownload;
+import com.hoccer.talk.filecache.transfer.CacheUpload;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -14,10 +10,13 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.hoccer.talk.filecache.model.CacheFile;
-import com.hoccer.talk.filecache.transfer.CacheDownload;
-import com.hoccer.talk.filecache.transfer.CacheUpload;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Vector;
 
 @WebServlet(urlPatterns={"/status"})
 public class StatusServlet extends HttpServlet {

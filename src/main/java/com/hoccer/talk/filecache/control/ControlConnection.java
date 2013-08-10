@@ -6,7 +6,6 @@ import com.hoccer.talk.filecache.model.CacheFile;
 import com.hoccer.talk.filecache.rpc.ICacheControl;
 import org.apache.log4j.Logger;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.UUID;

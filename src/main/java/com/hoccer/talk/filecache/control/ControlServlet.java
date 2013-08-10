@@ -12,7 +12,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
-import java.net.InetAddress;
 
 @WebServlet(urlPatterns = "/control")
 public class ControlServlet extends WebSocketServlet {

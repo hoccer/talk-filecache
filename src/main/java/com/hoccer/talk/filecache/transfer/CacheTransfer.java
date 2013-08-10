@@ -1,12 +1,11 @@
 package com.hoccer.talk.filecache.transfer;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import com.hoccer.talk.filecache.model.CacheFile;
+import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.hoccer.talk.filecache.model.CacheFile;
-import org.apache.log4j.Logger;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Active transfer to or from the cache
