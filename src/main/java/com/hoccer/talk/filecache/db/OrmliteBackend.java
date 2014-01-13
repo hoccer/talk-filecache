@@ -58,6 +58,8 @@ public class OrmliteBackend extends CacheBackend {
                     LOG.debug("creating table for files");
                 }
                 TableUtils.createTable(mConnectionSource, CacheFile.class);
+                LOG.info("Tables created - exiting now");
+                System.exit(0);
             }
             if(LOG.isDebugEnabled()) {
                 LOG.debug("creating dao for files");
