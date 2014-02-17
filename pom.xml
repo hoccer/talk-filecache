@@ -9,6 +9,7 @@
   </parent>
 
   <artifactId>hoccer-talk-filecache</artifactId>
+  <version>1.0.0</version>
 
   <name>Hoccer Talk Filecache</name>
 
