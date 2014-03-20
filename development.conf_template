@@ -7,6 +7,7 @@ talk.filecache.listen.address = localhost
 talk.filecache.listen.port = 8080
 
 # File store
+# NOTE: directory-path needs to be absolute
 talk.filecache.data.directory = /warez/fc
 talk.filecache.data.checkpointInterval = 2000
 
