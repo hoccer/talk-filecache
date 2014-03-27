@@ -43,6 +43,7 @@ public class CacheMain {
     private void run() {
         // load configuration
         CacheConfiguration config = initializeConfiguration();
+        config.report();
 
         // select and instantiate database backend
         CacheBackend db = initializeBackend(config);
@@ -90,15 +91,15 @@ public class CacheMain {
         if(config != null) {
             Properties properties = null;
             // load the property file
-            LOG.info("Configuring from file " + config);
+            LOG.info("Configuring from file '" + config + "'");
             try {
                 FileInputStream configIn = new FileInputStream(config);
                 properties = new Properties();
                 properties.load(configIn);
             } catch (FileNotFoundException e) {
-                LOG.error("Could not load " + config, e);
+                LOG.error("Could not load '" + config + "'", e);
             } catch (IOException e) {
-                LOG.error("Could not load " + config, e);
+                LOG.error("Could not load '" + config + "'", e);
             }
             // if we could load it then configure using it
             if(properties != null) {
@@ -124,7 +125,7 @@ public class CacheMain {
 
     private CacheBackend initializeBackend(CacheConfiguration configuration) {
         String backend = configuration.getDatabaseBackend();
-        LOG.info("Creating backend " + backend);
+        LOG.info("Creating backend: " + backend);
         if(backend.equals("ormlite")) {
             return new OrmliteBackend(configuration);
         }

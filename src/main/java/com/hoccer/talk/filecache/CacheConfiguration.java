@@ -1,9 +1,13 @@
 package com.hoccer.talk.filecache;
 
+import org.apache.log4j.Logger;
+
+import java.text.MessageFormat;
 import java.util.Properties;
 
 public class CacheConfiguration {
 
+    private static final Logger LOG = Logger.getLogger(CacheConfiguration.class);
     private static final String PROPERTY_PREFIX = "talk.filecache";
 
     private int    mServerThreads = 128;
@@ -121,6 +125,23 @@ public class CacheConfiguration {
         mOrmliteUrl = properties.getProperty(PROPERTY_PREFIX + ".ormlite.url", mOrmliteUrl);
         mOrmliteUser = properties.getProperty(PROPERTY_PREFIX + ".ormlite.user", mOrmliteUser);
         mOrmlitePassword = properties.getProperty(PROPERTY_PREFIX + ".ormlite.password", mOrmlitePassword);
+    }
+
+    public void report() {
+        LOG.info("Current configuration:" +
+                "\n - WebServer Configuration:" +
+                MessageFormat.format("\n   * listen address:                     ''{0}''", mListenAddress) +
+                MessageFormat.format("\n   * listen port:                        ''{0}''", Long.toString(mListenPort)) +
+                MessageFormat.format("\n   * threads:                            ''{0}''", mServerThreads) +
+                "\n - Database Configuration:" +
+                MessageFormat.format("\n   * database backend:                   ''{0}''", mDatabaseBackend) +
+                MessageFormat.format("\n   * ormlite url:                        ''{0}''", mOrmliteUrl) +
+                MessageFormat.format("\n   * ormlite user:                       ''{0}''", mOrmliteUser) +
+                MessageFormat.format("\n   * ormlite pass:                       ''{0}''", mOrmlitePassword) +
+                "\n - Other:" +
+                MessageFormat.format("\n   * data directory: ''{0}''", mDataDirectory) +
+                MessageFormat.format("\n   * data checkpoint interval: ''{0}''", Long.toString(mDataCheckpointInterval))
+        );
     }
 
 }
