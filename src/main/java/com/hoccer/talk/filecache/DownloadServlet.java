@@ -17,7 +17,7 @@ import java.io.IOException;
 @WebServlet(urlPatterns = "/download/*")
 public class DownloadServlet extends HttpServlet {
 
-    static Logger log = Logger.getLogger(DownloadServlet.class);
+    static Logger LOG = Logger.getLogger(DownloadServlet.class);
 
     @Override
     protected void doHead(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -27,19 +27,19 @@ public class DownloadServlet extends HttpServlet {
         // abort if we don't have one
         if(file == null) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND, "File does not exist");
-            log.info("HEAD " + req.getPathInfo() + " " + resp.getStatus() + " file not found");
+            LOG.info("HEAD " + req.getPathInfo() + " " + resp.getStatus() + " file not found");
             return;
         }
 
         // prepare the response
         ByteRange range = beginGet(file, req, resp);
         if(range == null) {
-            log.info("HEAD " + req.getPathInfo() + " " + resp.getStatus() + " invalid range");
+            LOG.info("HEAD " + req.getPathInfo() + " " + resp.getStatus() + " invalid range");
             return;
         }
         finishGet(file, req, resp, range);
 
-        log.info("HEAD " + req.getPathInfo() + " " + resp.getStatus() + " found " + file.getFileId() + " range " + range.toString());
+        LOG.info("HEAD " + req.getPathInfo() + " " + resp.getStatus() + " found " + file.getFileId() + " range " + range.toString());
     }
 
     @Override
@@ -50,7 +50,7 @@ public class DownloadServlet extends HttpServlet {
         // abort if we don't have one
         if(file == null) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND, "File does not exist");
-            log.info("GET " + req.getPathInfo() + " " + resp.getStatus() + " file not found");
+            LOG.info("GET " + req.getPathInfo() + " " + resp.getStatus() + " file not found");
             return;
         }
 
@@ -58,7 +58,7 @@ public class DownloadServlet extends HttpServlet {
         ByteRange range = beginGet(file, req, resp);
         // abort if there was an error
         if(range == null) {
-            log.info("GET " + req.getPathInfo() + " " + resp.getStatus() + " invalid range");
+            LOG.info("GET " + req.getPathInfo() + " " + resp.getStatus() + " invalid range");
             return;
         }
 
@@ -68,15 +68,15 @@ public class DownloadServlet extends HttpServlet {
         // finish response headers
         finishGet(file, req, resp, range);
 
-        log.info("GET " + req.getPathInfo() + " " + resp.getStatus() + " found " + file.getFileId() + " range " + range.toString());
+        LOG.info("GET " + req.getPathInfo() + " " + resp.getStatus() + " found " + file.getFileId() + " range " + range.toString());
 
         // perform the download itself
         try {
-            log.info("GET " + req.getPathInfo() + " --- download started");
+            LOG.info("GET " + req.getPathInfo() + " --- download started");
             download.perform();
-            log.info("GET " + req.getPathInfo() + " --- download finished");
+            LOG.info("GET " + req.getPathInfo() + " --- download finished");
         } catch (InterruptedException e) {
-            log.info("GET " + req.getPathInfo() + " --- download interrupted");
+            LOG.info("GET " + req.getPathInfo() + " --- download interrupted");
             return;
         }
     }

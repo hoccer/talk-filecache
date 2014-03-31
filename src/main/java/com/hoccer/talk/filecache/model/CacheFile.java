@@ -44,7 +44,7 @@ public class CacheFile {
     public static final String TYPE_STORAGE  = "storage";
     public static final String TYPE_TRANSFER = "transfer";
 
-    protected static Logger log = Logger.getLogger(CacheFile.class);
+    protected static Logger LOG = Logger.getLogger(CacheFile.class);
 
     transient private CacheBackend mBackend;
 
@@ -119,14 +119,14 @@ public class CacheFile {
     }
 
     public void onActivate(CacheBackend backend) {
-        log.debug("onActivate (file-id: '" + mFileId + "')");
+        LOG.debug("onActivate (file-id: '" + mFileId + "')");
         mBackend = backend;
         CacheConfiguration configuration = mBackend.getConfiguration();
         mCheckpointInterval = configuration.getDataCheckpointInterval();
     }
 
     public void onDeactivate() {
-        log.debug("onDeactivate (file-id: '" + mFileId + "')");
+        LOG.debug("onDeactivate (file-id: '" + mFileId + "')");
         if(mUpload != null) {
             mUpload.abort();
         }
@@ -237,7 +237,7 @@ public class CacheFile {
     }
 
     private void switchState(int newState, String cause) {
-        log.info("file with id '" + mFileId + "' switches state: " + stateNames[mState] +
+        LOG.info("file with id '" + mFileId + "' switches state: " + stateNames[mState] +
                  " -> " + stateNames[newState] + " (reason: '" + cause + "')");
         mState = newState;
         mBackend.checkpoint(this);
@@ -256,7 +256,7 @@ public class CacheFile {
         cal.setTime(now);
         cal.add(Calendar.SECOND, secondsFromNow);
         mExpiryTime = cal.getTime();
-        log.info("file with id '" + mFileId + "' expires on '" + mExpiryTime.toString() + "'");
+        LOG.info("file with id '" + mFileId + "' expires on '" + mExpiryTime.toString() + "'");
     }
 
     public void expire() {
@@ -352,7 +352,7 @@ public class CacheFile {
         mStateLock.lock();
         try {
             if(newLimit > mLimit) {
-                log.debug("limit is now " + newLimit + " was " + mLimit);
+                LOG.debug("limit is now " + newLimit + " was " + mLimit);
                 mLimit = newLimit;
             }
 
@@ -367,7 +367,7 @@ public class CacheFile {
             // do occasional checkpoints
             long now = System.currentTimeMillis();
             if((now - mLastCheckpoint) >= mCheckpointInterval) {
-                log.debug("checkpointing file with id '" + mFileId + "' at limit '" + mLimit + "'");
+                LOG.debug("checkpointing file with id '" + mFileId + "' at limit '" + mLimit + "'");
                 raf.getFD().sync();
                 mBackend.checkpoint(this);
                 mLastCheckpoint = now;
@@ -448,7 +448,7 @@ public class CacheFile {
         try {
             r = new RandomAccessFile(getFile(), mode);
         } catch (FileNotFoundException e) {
-            // XXX does not happen
+            LOG.error("Error opening file (with mode: '" + mode + "') ", e);
         }
         return r;
     }

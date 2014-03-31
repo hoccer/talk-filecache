@@ -15,7 +15,7 @@ import java.io.IOException;
 @WebServlet(urlPatterns = "/upload/*")
 public class UploadServlet extends DownloadServlet {
 
-    static Logger log = Logger.getLogger(UploadServlet.class);
+    static Logger LOG = Logger.getLogger(UploadServlet.class);
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp)
@@ -23,27 +23,27 @@ public class UploadServlet extends DownloadServlet {
         CacheFile file = getFileForUpload(req, resp);
         if(file == null) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND, "File does not exist");
-            log.info("PUT " + req.getPathInfo() + " " + resp.getStatus() + " file not found");
+            LOG.info("PUT " + req.getPathInfo() + " " + resp.getStatus() + " file not found");
             return;
         }
 
         ByteRange range = beginPut(file, req, resp);
         if(range == null) {
-            log.info("PUT " + req.getPathInfo() + " " + resp.getStatus() + " invalid range");
+            LOG.info("PUT " + req.getPathInfo() + " " + resp.getStatus() + " invalid range");
             return;
         }
 
-        log.info("PUT " + req.getPathInfo() + " " + resp.getStatus() + " found " + file.getFileId() + " range " + range.toContentRangeString());
+        LOG.info("PUT " + req.getPathInfo() + " " + resp.getStatus() + " found " + file.getFileId() + " range " + range.toContentRangeString());
 
         if(range.hasStart()) {
             CacheUpload upload = new CacheUpload(file, req, resp, range);
 
             try {
-                log.info("PUT " + req.getPathInfo() + " --- upload started");
+                LOG.info("PUT " + req.getPathInfo() + " --- upload started");
                 upload.perform();
-                log.info("PUT " + req.getPathInfo() + " --- upload finished");
+                LOG.info("PUT " + req.getPathInfo() + " --- upload finished");
             } catch (InterruptedException e) {
-                log.info("PUT " + req.getPathInfo() + " --- upload interrupted");
+                LOG.info("PUT " + req.getPathInfo() + " --- upload interrupted");
                 return;
             }
         }
@@ -53,7 +53,7 @@ public class UploadServlet extends DownloadServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        log.info("delete request: " + req.getPathInfo());
+        LOG.info("delete request: " + req.getPathInfo());
 
         CacheBackend backend = getCacheBackend();
 
@@ -64,7 +64,7 @@ public class UploadServlet extends DownloadServlet {
             return;
         }
 
-        log.info("DELETE " + req.getPathInfo() + " found " + file.getFileId());
+        LOG.info("DELETE " + req.getPathInfo() + " found " + file.getFileId());
 
         file.delete();
     }
@@ -152,7 +152,7 @@ public class UploadServlet extends DownloadServlet {
 
     private void finishPut(CacheFile file, HttpServletRequest req, HttpServletResponse resp) {
         resp.setContentLength(0);
-        log.debug("finishing put with range to limit " + file.getLimit() + " length " + file.getContentLength());
+        LOG.debug("finishing put with range to limit " + file.getLimit() + " length " + file.getContentLength());
         if(file.getLimit() > 0) {
             resp.setHeader("Range", "bytes=0-" + (file.getLimit() - 1) + "/" + file.getContentLength());
         }
