@@ -68,12 +68,24 @@ public class OrmliteBackend extends CacheBackend {
         } catch (SQLException e) {
             LOG.error("Error initializing ormlite", e);
         }
-        mExpiryExecutor.scheduleAtFixedRate(new Runnable() { // XXX CHANGE
+
+        LOG.info("cleaning files scheduling will start in '" + mConfiguration.getCleanupFilesDelay() + "' seconds.");
+        mExpiryExecutor.schedule(new Runnable() {
             @Override
             public void run() {
-                deleteExpiredFiles();
+                scheduleCleanupFiles();
             }
-        }, 10, 60, TimeUnit.SECONDS);
+        }, mConfiguration.getCleanupFilesDelay(), TimeUnit.SECONDS);
+    }
+
+    private void scheduleCleanupFiles() {
+        LOG.info("scheduling files cleanup in '" + mConfiguration.getCleanupFilesInterval() + "' seconds.");
+        mExpiryExecutor.schedule(new Runnable() {
+            @Override
+            public void run() {
+                doCleanupFiles();
+            }
+        }, mConfiguration.getCleanupFilesInterval(), TimeUnit.SECONDS);
     }
 
     private CacheFile activate(CacheFile file) {
@@ -252,8 +264,10 @@ public class OrmliteBackend extends CacheBackend {
         return res;
     }
 
-    private void deleteExpiredFiles() {
-        LOG.info("querying for expired files...");
+    private void doCleanupFiles() {
+        LOG.info("doCleanupFiles - querying for expired files...");
+        long startTime = System.currentTimeMillis();
+
         Date now = new Date();
         List<CacheFile> files = null;
         try {
@@ -266,7 +280,7 @@ public class OrmliteBackend extends CacheBackend {
                             .or(3)
                             .prepare();
             files = mDao.query(expiryQuery);
-            LOG.info("found " + files.size() + " files");
+            LOG.info("found " + files.size() + " expired files");
         } catch (SQLException e) {
             LOG.error("SQL exception", e);
         }
@@ -287,5 +301,9 @@ public class OrmliteBackend extends CacheBackend {
                 }
             }
         }
+
+        long endTime = System.currentTimeMillis();
+        LOG.info("deleting expired files done (took '" + (endTime - startTime) + "ms'). re-scheduling next run...");
+        scheduleCleanupFiles();
     }
 }
