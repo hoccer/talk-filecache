@@ -11,55 +11,54 @@ import java.io.RandomAccessFile;
 
 /**
  * Active download from the cache
- * 
+ *
  * @author ingo
  */
 public class CacheDownload extends CacheTransfer {
 
     ByteRange byteRange;
-	
-	public CacheDownload(CacheFile file, ByteRange range,
-						 HttpServletRequest req,
-						 HttpServletResponse resp)
-	{
-		super(file, req, resp);
+
+    public CacheDownload(CacheFile file, ByteRange range,
+                         HttpServletRequest req,
+                         HttpServletResponse resp) {
+        super(file, req, resp);
         byteRange = range;
-	}
-	
-	public void perform() throws IOException, InterruptedException {
+    }
+
+    public void perform() throws IOException, InterruptedException {
         // allocate a transfer buffer
-		byte[] buffer = BufferCache.takeBuffer();
-		
-		// set content type
-		httpResponse.setContentType(cacheFile.getContentType());
+        byte[] buffer = BufferCache.takeBuffer();
+
+        // set content type
+        httpResponse.setContentType(cacheFile.getContentType());
 
         // start the download
         transferBegin(Thread.currentThread());
-		cacheFile.downloadStarts(this);
+        cacheFile.downloadStarts(this);
 
-		try {
+        try {
             // open/get streams
-			OutputStream outStream = httpResponse.getOutputStream();
-			RandomAccessFile inFile = cacheFile.openForRandomAccess("r");
+            OutputStream outStream = httpResponse.getOutputStream();
+            RandomAccessFile inFile = cacheFile.openForRandomAccess("r");
 
             // determine amount of data to send
-            int totalRequested = ((int)byteRange.getEnd()) - ((int)byteRange.getStart()) + 1;
+            int totalRequested = ((int) byteRange.getEnd()) - ((int) byteRange.getStart()) + 1;
 
             // seek forward to the requested range
-			inFile.seek(byteRange.getStart());
+            inFile.seek(byteRange.getStart());
 
             // loop until done
             int totalTransferred = 0;
-            int absolutePosition = (int)byteRange.getStart();
+            int absolutePosition = (int) byteRange.getStart();
             int absoluteEnd = absolutePosition + totalRequested;
-            while(totalTransferred < totalRequested) {
+            while (totalTransferred < totalRequested) {
                 // abort on thread interrupt
-                if(Thread.interrupted()) {
+                if (Thread.interrupted()) {
                     throw new InterruptedException("Transfer thread interrupted");
                 }
 
                 // abort when file becomes invalid
-                if(!cacheFile.isAlive()) {
+                if (!cacheFile.isAlive()) {
                     throw new InterruptedException("File no longer available");
                 }
 
@@ -74,7 +73,7 @@ public class CacheDownload extends CacheTransfer {
                 while ((absoluteLimit != cacheFile.getContentLength())
                         && (limit < (absolutePosition + bytesWanted))) {
                     Thread.sleep(100);
-                    if(!cacheFile.waitForData(absoluteLimit + bytesWanted)) {
+                    if (!cacheFile.waitForData(absoluteLimit + bytesWanted)) {
                         throw new InterruptedException("File no longer available");
                     }
                     limit = cacheFile.getLimit();
@@ -83,7 +82,7 @@ public class CacheDownload extends CacheTransfer {
 
                 // read data from file
                 int bytesRead = inFile.read(buffer, 0, bytesWanted);
-                if(bytesRead == -1) {
+                if (bytesRead == -1) {
                     break; // XXX
                 }
 
@@ -97,18 +96,18 @@ public class CacheDownload extends CacheTransfer {
             }
 
             // close file stream
-			inFile.close();
-			
-		} catch (InterruptedException e) {
+            inFile.close();
+
+        } catch (InterruptedException e) {
             cacheFile.downloadAborted(this);
             // rethrow to finish the http request
             throw e;
         } catch (IOException e) {
             // notify the file of the abort
-			cacheFile.downloadAborted(this);
+            cacheFile.downloadAborted(this);
             // rethrow to finish the http request
-			throw e;
-		} finally {
+            throw e;
+        } finally {
             // always finish the rate estimator
             transferEnd();
             // return the transfer buffer
@@ -116,7 +115,7 @@ public class CacheDownload extends CacheTransfer {
         }
 
         // we are done, tell everybody
-		cacheFile.downloadFinished(this);
-	}
+        cacheFile.downloadFinished(this);
+    }
 
 }

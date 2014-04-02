@@ -118,7 +118,7 @@ public class OrmliteBackend extends CacheBackend {
     public void delete(CacheFile file) {
         // delete the file
         File f = file.getFile();
-        if(f.exists()) {
+        if (f.exists()) {
             f.delete();
         }
         // delete the record

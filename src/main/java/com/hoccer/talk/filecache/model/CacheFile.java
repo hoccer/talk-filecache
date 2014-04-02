@@ -127,13 +127,13 @@ public class CacheFile {
 
     public void onDeactivate() {
         LOG.debug("onDeactivate (file-id: '" + mFileId + "')");
-        if(mUpload != null) {
+        if (mUpload != null) {
             mUpload.abort();
         }
-        for(CacheDownload download: mDownloads) {
+        for (CacheDownload download: mDownloads) {
             download.abort();
         }
-        if(mExpiryFuture != null) {
+        if (mExpiryFuture != null) {
             mExpiryFuture.cancel(false);
         }
     }
