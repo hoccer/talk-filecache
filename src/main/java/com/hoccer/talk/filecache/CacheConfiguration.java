@@ -29,7 +29,7 @@ public class CacheConfiguration {
     private int mCleanupFilesInterval = 60; // in seconds
 
     private int mStorageFileExpiryTime = 365 * 24 * 3600; // 1 year (in seconds)
-    private int mTransferFileExpiryTime = 120;//3 * 7 * 24 * 3600; // 3 weeks (in seconds)
+    private int mTransferFileExpiryTime = 3 * 7 * 24 * 3600; // 3 weeks (in seconds)
 
 
     public int getStorageFileExpiryTime() {
