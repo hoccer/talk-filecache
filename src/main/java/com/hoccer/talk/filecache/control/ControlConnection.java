@@ -53,7 +53,7 @@ public class ControlConnection implements ICacheControl {
         file.setAccountId(accountId);
         file.setContentType(contentType);
         file.setContentLength(contentLength);
-        file.setupExpiry(365 * 24 * 3600); // XXX 1 year
+        file.setupExpiry(mBackend.getConfiguration().getStorageFileExpiryTime());
 
         mBackend.checkpoint(file);
 
@@ -75,7 +75,7 @@ public class ControlConnection implements ICacheControl {
         file.setAccountId(accountId);
         file.setContentType(contentType);
         file.setContentLength(contentLength);
-        file.setupExpiry(3 * 7 * 24 * 3600); // XXX 3 weeks
+        file.setupExpiry(mBackend.getConfiguration().getTransferFileExpiryTime());
 
         mBackend.checkpoint(file);
 

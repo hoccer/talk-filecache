@@ -18,9 +18,6 @@ public class CacheUpload extends CacheTransfer {
 
     ByteRange byteRange;
 
-    public static final int MIN_LIFETIME = 10;
-    public static final int MAX_LIFETIME = 3 * 365 * 24 * 3600;
-
     public CacheUpload(CacheFile file,
                        HttpServletRequest req,
                        HttpServletResponse resp,
