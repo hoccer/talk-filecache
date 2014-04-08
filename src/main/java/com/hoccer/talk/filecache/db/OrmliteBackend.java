@@ -189,7 +189,7 @@ public class OrmliteBackend extends CacheBackend {
         }
 
         if(LOG.isDebugEnabled()) {
-            LOG.debug("found file by file-id '" + id + "'? -> " + (res != null ? "yes" : "no"));
+            LOG.debug((res != null ? "did" : "did NOT") + " find file by file-id '" + id + "'");
         }
 
         // return whatever we got
@@ -213,7 +213,7 @@ public class OrmliteBackend extends CacheBackend {
         }
 
         if(LOG.isDebugEnabled()) {
-            LOG.debug("found file by upload-id '" + id + "'? -> " + (res != null ? "yes" : "no"));
+            LOG.debug((res != null ? "did" : "did NOT") + " find file by upload-id '" + id + "'");
         }
 
         return res;
@@ -236,7 +236,7 @@ public class OrmliteBackend extends CacheBackend {
         }
 
         if(LOG.isDebugEnabled()) {
-            LOG.debug("found file by download-id '" + id + "'? -> " + (res != null ? "yes" : "no"));
+            LOG.debug((res != null ? "did" : "did NOT") + " find file by download-id '" + id + "'");
         }
 
         return res;
