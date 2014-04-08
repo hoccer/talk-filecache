@@ -39,22 +39,9 @@ public class CacheMain {
                 description = "Initialize database")
     boolean initdb;
 
-
-    private void run() {
-        // load configuration
-        CacheConfiguration config = initializeConfiguration();
-        config.report();
-
-        // select and instantiate database backend
-        CacheBackend db = initializeBackend(config);
-
+    public static void setupServer(Server s, CacheBackend db) {
         // log about jetty init
         LOG.info("Configuring jetty");
-
-        // create jetty instance
-        Server s = new Server(new InetSocketAddress(config.getListenAddress(),
-                                                    config.getListenPort()));
-        s.setThreadPool(new QueuedThreadPool(config.getServerThreads()));
 
         // create servlet context
         ServletContextHandler context = new ServletContextHandler();
@@ -68,12 +55,22 @@ public class CacheMain {
         // set root handler of the server
         s.setHandler(context);
 
-        // start backend
-        LOG.info("Starting backend");
-        db.start();
+    }
+
+    private void run(CacheConfiguration config) {
+        // select and instantiate database backend
+        CacheBackend db = initializeBackend(config);
+
+        // create jetty instance
+        Server s = new Server(new InetSocketAddress(config.getListenAddress(),
+                                                    config.getListenPort()));
+        s.setThreadPool(new QueuedThreadPool(config.getServerThreads()));
+        setupServer(s, db);
 
         // run and stop when interrupted
         try {
+            LOG.info("Starting backend");
+            db.start();
             LOG.info("Starting server");
             s.start();
             s.join();
@@ -144,8 +141,12 @@ public class CacheMain {
         JCommander commander = new JCommander(main, args);
         // configure log4j from the config file
         PropertyConfigurator.configure(main.config);
+
+        // load configuration
+        CacheConfiguration config = main.initializeConfiguration();
+        config.report();
         // run the thing
-        main.run();
+        main.run(config);
     }
 
 }
