@@ -32,11 +32,11 @@ public class CacheFile {
     public static final int STATE_DELETED = 6;
 
     private static String[] stateNames = {
-            "UNKNOWN",
+            "UNKNOWN", // not used - delete?
             "NEW",
             "UPLOADING",
             "COMPLETE",
-            "ABANDONED",
+            "ABANDONED", // not used - delete?
             "EXPIRED",
             "DELETED"
     };
