@@ -2,6 +2,7 @@ package com.hoccer.talk.filecache.transfer;
 
 import com.google.appengine.api.blobstore.ByteRange;
 import com.hoccer.talk.filecache.model.CacheFile;
+import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,6 +17,8 @@ import java.io.RandomAccessFile;
  */
 public class CacheDownload extends CacheTransfer {
 
+    static Logger LOG = Logger.getLogger(CacheDownload.class);
+
     ByteRange byteRange;
 
     public CacheDownload(CacheFile file, ByteRange range,
@@ -26,6 +29,7 @@ public class CacheDownload extends CacheTransfer {
     }
 
     public void perform() throws IOException, InterruptedException {
+        LOG.debug("CacheDownload.perform");
         // allocate a transfer buffer
         byte[] buffer = BufferCache.takeBuffer();
 
@@ -83,9 +87,10 @@ public class CacheDownload extends CacheTransfer {
                 // read data from file
                 int bytesRead = inFile.read(buffer, 0, bytesWanted);
                 if (bytesRead == -1) {
+                    LOG.debug("failed to read from file, bytesread= "+bytesRead);
                     break; // XXX
                 }
-
+                LOG.debug("writing "+bytesRead+"to output stream");
                 // write to http output stream
                 outStream.write(buffer, 0, bytesRead);
 
@@ -94,6 +99,7 @@ public class CacheDownload extends CacheTransfer {
                 absolutePosition += bytesRead;
                 transferProgress(bytesRead);
             }
+            LOG.debug("closing inFile");
 
             // close file stream
             inFile.close();
@@ -113,6 +119,7 @@ public class CacheDownload extends CacheTransfer {
             // return the transfer buffer
             BufferCache.returnBuffer(buffer);
         }
+        LOG.debug("download finished");
 
         // we are done, tell everybody
         cacheFile.downloadFinished(this);

@@ -388,6 +388,9 @@ public class CacheFile {
     }
 
     public boolean waitForData(int wantedPosition) throws InterruptedException {
+        LOG.debug("waitForData wantedPosition="+wantedPosition);
+        LOG.debug("file with id '" + mFileId + "' has state: " + stateNames[mState] + " limit="+mLimit);
+
         // acquire state lock
         mStateLock.lock();
 
@@ -413,6 +416,7 @@ public class CacheFile {
                 return false;
             }
 
+            LOG.debug("waitForData - wait for state change");
             // wait for state change
             mStateChanged.await();
 
